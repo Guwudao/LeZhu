@@ -1,0 +1,246 @@
+//
+//  GYDoorTableViewController.m
+//  LeZhu
+//
+//  Created by apple on 17/3/2.
+//  Copyright © 2017年 guanyue. All rights reserved.
+//
+
+#import "GYDoorTableViewController.h"
+#import "GYDoorTableViewCell.h"
+#import "DoorModel.h"
+#import "ResidentsModel.h"
+#import "LXAlertView.h"
+#import "GYGetApproveViewController.h"
+#import "GYAllXQViewController.h"
+
+static NSString*const cellID = @"doorCell";
+
+@interface GYDoorTableViewController ()
+
+@property(nonatomic, strong)DoorModel *doorModel;
+
+@property(nonatomic, strong)NSMutableArray *residentsArr; // 小区数组
+
+@end
+
+@implementation GYDoorTableViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    [SVProgressHUD showWithStatus:@"加载中.."];
+
+    [self setTableViewConfig];
+
+    [self setNavBarItem];
+    
+    [self getResidentsInfo];
+    
+    [self setupRefresh];
+    
+    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStylePlain target:self
+    action:nil];
+}
+
+
+- (void)setupRefresh{
+    MJRefreshNormalHeader *header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(getResidentsInfo)];
+    header.automaticallyChangeAlpha = YES;
+    header.lastUpdatedTimeLabel.hidden = YES;
+    header.stateLabel.font = [UIFont systemFontOfSize:14];
+    self.tableView.mj_header = header;
+}
+
+// 发送网络请求
+- (void)getResidentsInfo{
+    
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+    NSString *mobile = [def valueForKey:@"phone"];
+    
+    if (!(mobile.length == 0)) {
+        JWNetWorking *mgr = [JWNetWorking sharedManager];
+        NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+        parameters[@"mobile"] = [[NSUserDefaults standardUserDefaults] objectForKey:@"phone"];
+        
+        [mgr getRequestWithUrl:GYGetResidentsURL parameter:parameters successBlock:^(id responseBody) {
+            [self.tableView.mj_header endRefreshing];
+            _doorModel = [DoorModel mj_objectWithKeyValues:responseBody];
+            
+            [SVProgressHUD dismiss];
+            
+            
+            [self.tableView reloadData];
+            
+        } failureBlock:^(NSString *error) {
+            GYLog(@"失败");
+            [self.tableView.mj_header endRefreshing];
+            [JWAlert showMsg:@"网络不通畅, 请稍后再试" WithOwner:self];
+        }];
+    }
+    
+    
+//    }
+
+  
+   
+}
+
+// 设置table view
+- (void)setTableViewConfig{
+    [self.tableView registerNib:[UINib nibWithNibName:@"GYDoorTableViewCell" bundle:nil] forCellReuseIdentifier:cellID];
+    
+    self.tableView.tableFooterView = [[UIView alloc] init];
+//    self.tableView.tableFooterView.backgroundColor = [UIColor lightGrayColor];
+}
+
+// 设置导航栏
+- (void)setNavBarItem{
+    self.navigationItem.title = @"我的小区";
+    
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"添加小区" style:UIBarButtonItemStylePlain target:self action:@selector(navRightBtnClick)];
+}
+
+
+// 点击"添加小区"
+- (void)navRightBtnClick{
+    GYLog(@"添加小区");
+//    [self getResidentsInfo];
+    GYAllXQViewController *vc = [[GYAllXQViewController alloc] init];
+    self.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:vc animated:YES];
+//    self.hidesBottomBarWhenPushed = NO;
+}
+
+
+- (void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:YES];
+    [SVProgressHUD dismiss];
+}
+
+#pragma mark - Table view data source
+
+
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    
+    
+    //如果只有一个小区, 就显示一组, 否则显示两组
+//    if (_doorModel.extra.count == 1) {
+//        return 1;
+//    }else if(_doorModel.extra.count > 1){
+//        return 2;
+//
+//    }else{
+//        return 0;
+//    }
+    return 2;
+}
+
+-(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section{
+    if (section == 0) {
+        return @"当前小区";
+    }else{
+        return @"已授权小区";
+    }
+    
+}
+
+-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
+    return 45;
+}
+
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return  75;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    // 如果是第一组,就只显示一个, 第二组显示所有授权的小区
+    if (section == 0) {
+        return 1;
+    }else if(section == 1){
+        return _doorModel.extra.count;
+    }
+    return 0;
+}
+
+// 设置组头字体大小
+-(void)tableView:(UITableView *)tableView willDisplayHeaderView:(UIView *)view forSection:(NSInteger)section{
+    UITableViewHeaderFooterView *header = (UITableViewHeaderFooterView *)view;
+    [header.textLabel setFont:[UIFont systemFontOfSize:15]];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    GYDoorTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellID forIndexPath:indexPath];
+    // 如果是第一组, 只显示一个
+    if (indexPath.section == 0) {
+        // 默认显示第一个
+        NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+        NSString *defXQ = [def objectForKey:@"myXQ"];
+        NSString *defBdName = [def objectForKey:@"myBdName"];
+        NSString *defHouseName = [def objectForKey:@"myHouseName"];
+        NSString *defStrict = [def objectForKey:@"myDistrict"];
+        //拼接字符串
+        if (defXQ == nil) {
+            cell.selectedImg.hidden = YES;
+            cell.certificateL.hidden = YES;
+            cell.xiaoquNameL.text = @"您还未选择小区";
+            cell.cityL.text = @" ";
+        }else{
+            NSString *str1 = [NSString stringWithFormat:@"%@ %@ %@",defXQ, defBdName, defHouseName];
+
+            cell.selectedImg.hidden = NO;
+            cell.xiaoquNameL.text = str1;
+            cell.cityL.text = defStrict;
+        }
+        
+        cell.userInteractionEnabled = NO;
+        cell.accessoryType = UIAccessibilityTraitNone;
+        
+    }else{
+        
+        ResidentsModel *resModel1 = _doorModel.extra[indexPath.row];
+        //门牌号转化为字符串
+        NSString *housename1 = [NSString stringWithFormat:@"%ld", resModel1.housename];
+        //拼接字符串
+        NSString *str1 = [NSString stringWithFormat:@"%@ %@ %@",resModel1.xqname, resModel1.bdname, housename1];
+        
+        NSLog(@"%ld", resModel1.status);
+        
+        if (resModel1.status == 0) {
+            cell.certificateL.text = @"审核中";
+            cell.certificateL.backgroundColor = [UIColor grayColor];
+        }
+        cell.selectedImg.hidden = YES;
+        cell.xiaoquNameL.text = str1;
+        cell.cityL.text = resModel1.district;
+    }
+    
+    return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    ResidentsModel *resModel = _doorModel.extra[indexPath.row];
+    
+    if (resModel.status == 0 || resModel.status == 2 || resModel.status == -1) {
+        [JWAlert showMsg:@"该小区未获得授权" WithOwner:self];
+    }else if(resModel.status == 1){
+        NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+        [def setObject:resModel.xqname forKey:@"myXQ"]; // 小区名字
+        
+        //门牌号转化为字符串
+        NSString *housename = [NSString stringWithFormat:@"%ld", resModel.housename];
+        [def setObject:housename forKey:@"myHouseName"];
+        
+        [def setObject:resModel.bdname forKey:@"myBdName"];
+        
+        [def setObject:resModel.district forKey:@"myDistrict"];
+        
+        [self.navigationController popViewControllerAnimated:YES];
+    }
+        
+    
+
+}
+
+@end

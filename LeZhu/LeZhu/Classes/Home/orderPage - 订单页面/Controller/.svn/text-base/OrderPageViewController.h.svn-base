@@ -1,0 +1,25 @@
+//
+//  OrderPageViewController.h
+//  LeZhu
+//
+//  Created by JJ on 17/4/14.
+//  Copyright © 2017年 guanyue. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+@class ApplianceDetailModel;
+
+@interface OrderPageViewController : UIViewController
+
+//订单类型（如：家电保洁，小儿推拿）
+@property(nonatomic,strong) NSString *dataType;
+
+//订单id
+@property(nonatomic,strong) NSString *orderID;
+
+
+//模型接收 家电保洁 支付数据
+@property(nonatomic,strong) ApplianceDetailModel *model;
+
+
+@end

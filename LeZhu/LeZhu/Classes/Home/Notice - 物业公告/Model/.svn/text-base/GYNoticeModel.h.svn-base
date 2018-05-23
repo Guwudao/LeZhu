@@ -1,0 +1,23 @@
+//
+//  GYNoticeModel.h
+//  LeZhu
+//
+//  Created by apple on 17/3/7.
+//  Copyright © 2017年 guanyue. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface GYNoticeModel : NSObject
+
+// 时间
+@property(nonatomic, copy)NSString *ctime;
+
+// 内容
+@property(nonatomic, copy)NSString *detail;
+
+// 标题
+@property(nonatomic, copy)NSString *title;
+
+
+@end

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16C67" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="Snw-gf-7gV">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--About Us View Controller-->
+        <scene sceneID="xij-3E-eS5">
+            <objects>
+                <viewController id="Snw-gf-7gV" customClass="GYAboutUsViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="2Yt-J0-vf3"/>
+                        <viewControllerLayoutGuide type="bottom" id="TwE-hE-slR"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="AdJ-cO-8cG">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo" translatesAutoresizingMaskIntoConstraints="NO" id="G9Q-li-lEf">
+                                <rect key="frame" x="137.5" y="60" width="100" height="100"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="100" id="dS7-o1-S3I"/>
+                                    <constraint firstAttribute="height" constant="100" id="wcS-4O-eTP"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="4.0.0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SCt-aK-IYz">
+                                <rect key="frame" x="170" y="185" width="36" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="9xi-Jm-CMu"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                <color key="textColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="&quot;乐主&quot;顾名思义快乐的主人, 让业主做快乐的主人, 乐主是广东冠粤科技有限公司自主研发的专门为每个小区业主和物主公司提供贴身服务, 将各类通知及物业咨询传递业主, 是一个集生活服务和小区活动为一体的手机APP。" textAlignment="justified" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="S3K-WM-IV4">
+                                <rect key="frame" x="20" y="231" width="335" height="90"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <color key="textColor" cocoaTouchSystemColor="scrollViewTexturedBackgroundColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="广东冠粤科技有限公司" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ceK-rh-15A">
+                                <rect key="frame" x="121" y="391" width="133" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="eOb-H9-kHR"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                <color key="textColor" cocoaTouchSystemColor="scrollViewTexturedBackgroundColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Copyright © 2015" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wqz-dA-g6I">
+                                <rect key="frame" x="133.5" y="412" width="108" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="pQg-PB-QD5"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                <color key="textColor" cocoaTouchSystemColor="scrollViewTexturedBackgroundColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="SCt-aK-IYz" firstAttribute="top" secondItem="G9Q-li-lEf" secondAttribute="bottom" constant="25" id="26s-3s-wns"/>
+                            <constraint firstItem="SCt-aK-IYz" firstAttribute="centerX" secondItem="AdJ-cO-8cG" secondAttribute="centerX" id="3bU-Ts-DKv"/>
+                            <constraint firstItem="ceK-rh-15A" firstAttribute="centerX" secondItem="AdJ-cO-8cG" secondAttribute="centerX" id="C23-ql-6NG"/>
+                            <constraint firstItem="S3K-WM-IV4" firstAttribute="leading" secondItem="AdJ-cO-8cG" secondAttribute="leading" constant="20" id="SLY-Wp-xmd"/>
+                            <constraint firstItem="G9Q-li-lEf" firstAttribute="centerX" secondItem="AdJ-cO-8cG" secondAttribute="centerX" id="WHF-k8-pVq"/>
+                            <constraint firstItem="ceK-rh-15A" firstAttribute="top" secondItem="S3K-WM-IV4" secondAttribute="bottom" constant="70" id="X7C-wc-zKP"/>
+                            <constraint firstItem="wqz-dA-g6I" firstAttribute="centerX" secondItem="AdJ-cO-8cG" secondAttribute="centerX" id="cIB-li-1nE"/>
+                            <constraint firstItem="S3K-WM-IV4" firstAttribute="top" secondItem="SCt-aK-IYz" secondAttribute="bottom" constant="25" id="g7N-zx-4kQ"/>
+                            <constraint firstAttribute="trailing" secondItem="S3K-WM-IV4" secondAttribute="trailing" constant="20" id="jO6-x8-6sd"/>
+                            <constraint firstItem="wqz-dA-g6I" firstAttribute="top" secondItem="ceK-rh-15A" secondAttribute="bottom" id="ve7-mX-Hu6"/>
+                            <constraint firstItem="G9Q-li-lEf" firstAttribute="top" secondItem="2Yt-J0-vf3" secondAttribute="bottom" constant="40" id="zxN-f0-shd"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="logoImg" destination="G9Q-li-lEf" id="as8-Ow-Oig"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="VjA-ML-eMN" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-15.199999999999999" y="115.59220389805098"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="logo" width="320" height="320"/>
+    </resources>
+</document>

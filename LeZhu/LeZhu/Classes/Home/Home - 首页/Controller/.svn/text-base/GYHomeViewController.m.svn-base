@@ -1,0 +1,779 @@
+//
+//  GYHomeViewController.m
+//  LeZhu
+//
+//  Created by apple on 17/2/3.
+//  Copyright © 2017年 guanyue. All rights reserved.
+//
+
+#import "GYHomeViewController.h"
+#import "GYCollectionReusableView.h"
+#import "GYLineView.h"
+#import "GYMainCollectionViewCell.h"
+#import "SDCycleScrollView.h"
+#import "GYRepairTableViewController.h"
+#import <AudioToolbox/AudioToolbox.h>
+#import "GYDevModel.h"
+#import "LXAlertView.h"
+#import "GYGetApproveViewController.h"
+#import "GYLoginViewController.h"
+#import "GYRegisterViewController.h"
+#import "GYNavigationController.h"
+#import "JWDoorTool.h"
+#import "GYDoorTableViewController.h"
+#import "GYBannerModel.h"
+#import "GYHeaderCollectionViewCell.h"
+#import "GYApplianceViewController.h"
+#import "ServiceAddressModel.h"
+#import "GYNannyViewController.h"
+
+
+// 服务菜单collection view的参数
+static NSString *const ID = @"GYMainCollectionViewCell";
+#define itemW screenW/2
+#define itemH 100
+
+// 头部collection view参数
+static NSString *const headerCollectionID = @"GYHeaderCollectionCell";
+static NSInteger const headerCols = 4;
+static CGFloat  headerSpace = 10;
+#define headerItemW (screenW - 5 * headerSpace)/headerCols
+#define itemLabelH 20
+#define headerCollectionViewH (headerItemW + itemLabelH - 10)
+
+// 头部视图
+static NSString * HeaderID = @"headerID";
+#define headerH (210 + headerCollectionViewH)
+#define bannerH 160
+#define lineViewH 50
+
+@interface GYHomeViewController ()<UICollectionViewDelegate,UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, SDCycleScrollViewDelegate>
+
+@property(nonatomic, weak)UIScrollView *scrollV;
+
+@property(nonatomic, weak) SDCycleScrollView *bannerV; // 轮播图
+
+@property(nonatomic, weak) UICollectionView *collectionV; // 生活服务列表
+
+@property(nonatomic, weak) GYCollectionReusableView *headerV; // 头部视图
+
+@property(nonatomic, strong) NSArray *imageArr; //cell的图片名
+
+
+@property(nonatomic, strong) NSArray *cellTitleArr; //cell的大标题
+
+@property(nonatomic, strong) NSArray *cellSubTitleArr; //cell的小标题
+
+@property(nonatomic, strong) NSArray *cellTitleColorArr; //cell的文字颜色
+
+@property(nonatomic, strong) NSArray *controllersArr; //点击cell跳转的控制器数组
+
+@property(nonatomic, weak)UILabel *label;
+
+
+@property (nonatomic, strong) NSMutableDictionary *tempDevDict; // App account in DoorMaster Server devices data
+
+@property (nonatomic, strong) NSArray *devArr; // 已授权的设备模型数组
+
+@property (nonatomic, strong)NSArray *bannerModelArr;
+
+@property (nonatomic, strong)UIImageView *holderV;
+
+// 服务菜单的collection view数据
+@property(nonatomic, strong) NSArray *imageArrSer; //cell的图片名
+
+@property(nonatomic, strong) NSArray *cellTitleArrSer; //cell的大标题
+
+
+@property(nonatomic, strong) NSArray *cellSubTitleArrSer; //cell的小标题
+
+@property(nonatomic, strong) NSArray *cellTitleColorArrSer; //cell的文字颜色
+
+
+//@property(nonatomic,strong) ServiceAddressModel *model;  // 服务地址模型
+
+@property(nonatomic,strong) NSString *serviceAddress;  // 服务地址
+
+//@property(nonatomic, strong) NSArray *textArr;
+
+
+@end
+
+@implementation GYHomeViewController
+
+#pragma mark - 懒加载 
+
+
+
+-(NSArray *)imageArrSer{
+    if (!_imageArrSer) {
+        _imageArrSer = @[@"1", @"2", @"3", @"4", @"5", @"6", @"7", @"8", @"9", @"0"];
+    }
+    return _imageArrSer;
+}
+
+-(NSArray *)cellSubTitleArrSer{
+    if (!_cellSubTitleArrSer) {
+        _cellSubTitleArrSer = @[@"日常家居清洁", @"做家务,照顾老人小孩", @"清洗灶台抽油烟机", @"深入清洁,新居清洁", @"照顾产妇与新生儿", @"按摩穴位经络通畅", @"产妇产后无乳,乳少等", @"婴儿照料,护理,教育", @"照顾,陪伴病患", @""];
+    }
+    return _cellSubTitleArrSer;
+}
+
+-(NSArray *)cellTitleArrSer{
+    if (!_cellTitleArrSer) {
+        _cellTitleArrSer = @[@"日常保洁", @"保姆", @"家电保洁", @"深度/开荒", @"月嫂", @"育婴师", @"催乳师", @"小儿推拿", @"护工", @""];
+    }
+    return  _cellTitleArrSer;
+}
+
+-(NSArray *)cellTitleColorArrSer{
+    if (!_cellTitleColorArrSer) {
+        UIColor *color1 = COLOR(0, 175, 240, 1);
+        UIColor *color2 = COLOR(93, 174, 66, 1);
+        UIColor *color3 = COLOR(253, 162, 1, 1);
+        UIColor *color4 = COLOR(184, 43, 16, 1);
+        
+        UIColor *color5 = COLOR(227, 64, 109, 1);
+        UIColor *color6 = COLOR(234, 90, 235, 1);
+        UIColor *color7 = COLOR(103, 188, 194, 1);
+        UIColor *color8 = COLOR(171, 94, 233, 1);
+        
+        UIColor *color9 = COLOR(242, 100, 76, 1);
+
+        _cellTitleColorArrSer = @[color1, color2, color3, color4, color5, color6, color7, color8, color9, color9];
+    }
+    return _cellTitleColorArrSer;
+}
+
+
+- (NSArray *)controllersArr{
+    if (!_controllersArr) {
+        _controllersArr = @[@"GYNoticeTableViewController", @"GYRepairTableViewController", @"GYDoorTableViewController", @"GYVisotorsTableViewController"];
+    }
+    return _controllersArr;
+}
+
+- (NSArray *)cellTitleColorArr{
+    if (!_cellTitleColorArr) {
+        UIColor *color1 = COLOR(243, 85, 62, 1);
+        UIColor *color2 = COLOR(250, 145, 9, 1);
+        UIColor *color3 = COLOR(209, 101, 235, 1);
+        UIColor *color4 = COLOR(111, 126, 237, 1);
+        _cellTitleColorArr = @[color1, color2, color4, color3];
+    }
+    return _cellTitleColorArr;
+}
+
+- (NSArray *)cellSubTitleArr{
+    if (!_cellSubTitleArr) {
+        _cellSubTitleArr = @[@"小区物业公告", @"小区物业报修", @"业主租客获取特权", @"临时密码亲朋探访"];
+    }
+    return _cellSubTitleArr;
+}
+
+- (NSArray *)cellTitleArr{
+    if (!_cellTitleArr) {
+        _cellTitleArr = @[@"物业公告", @"物业报修", @"申请授权", @"访客通行"];
+    }
+    return _cellTitleArr;
+}
+
+- (NSArray *)imageArr{
+    if (!_imageArr) {
+        _imageArr = @[@"wuyegonggao", @"wuyebaoxiu",@"menjinshouquan",@"fangkeshouquan"];
+    }
+    return _imageArr;
+}
+
+
+#pragma mark - 控制器生命周期方法
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    
+    // 初始化
+    [self initial];
+    
+    // 创建scroll view
+    CGFloat contentH = 1100;
+    
+    UIScrollView *mainScrollV = [[UIScrollView alloc ] initWithFrame:self.view.bounds];
+    [self.view addSubview: mainScrollV];
+    self.scrollV = mainScrollV;
+    self.scrollV.contentSize = CGSizeMake(0, contentH);
+    self.scrollV.backgroundColor = [UIColor whiteColor];
+    [self creatHeaderCollectionV];
+    [self creatRoundScrollView];
+    
+    // 创建collectionView
+    [self creatCollectionView];
+    
+    // 防止轮播图出现莫名BUG
+    self.automaticallyAdjustsScrollViewInsets = NO;
+    
+
+    // 设置navigationBar **********************************************
+    [self initNavBarButton];
+    
+
+    // 设置允许摇一摇功能
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"shakeOpenSwitch"] isEqualToString:@"1"]) {
+        // 并让自己成为第一响应者
+        [UIApplication sharedApplication].applicationSupportsShakeToEdit = YES;
+
+        [self becomeFirstResponder];
+        
+    }else{
+        [self resignFirstResponder];
+    }
+}
+
+-(void)viewWillAppear:(BOOL)animated{
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+    NSString *str = [def objectForKey:@"myXQ"];
+    NSString *phoneStr = [def objectForKey:@"phone"];
+    GYLog(@"str %@, phoneStr %@", str, phoneStr);
+    if (str.length == 0 || str == nil) {
+        self.label.text = @"我的小区";
+
+    }else{
+        self.label.text = str;
+    }
+}
+
+#pragma mark - navigation bar
+- (void)initNavBarButton{
+//    // 右边按钮
+//    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"message"] style:UIBarButtonItemStylePlain target:self action:@selector(rightBarBtnClick)];
+    
+//    UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeSystem];
+//    [rightBtn setImage:[UIImage imageNamed:@"location"] forState:UIControlStateNormal];
+//    [rightBtn setTitle:@"我的小区" forState:UIControlStateNormal];
+//    self.leftBtn = rightBtn;
+//    rightBtn.titleLabel.font = [UIFont systemFontOfSize:14];
+//    rightBtn.tintColor = [UIColor whiteColor];
+//    rightBtn.titleEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
+//    rightBtn.frame = CGRectMake(0, 0, 100, 30);
+//    rightBtn.userInteractionEnabled = YES;
+//    [rightBtn addTarget:self action:@selector(leftBtnClick) forControlEvents:UIControlEventTouchUpInside];
+    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(-50, 0, 120, 30)];
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:view];
+    
+    UIImageView *imgV = [[UIImageView alloc] initWithFrame:CGRectMake(-10, 7, 18, 15)];
+    imgV.image = [UIImage imageNamed:@"location"];
+    imgV.contentMode = UIViewContentModeScaleAspectFit;
+    [view addSubview:imgV];
+    
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(6, 0, 100, 30)];
+    label.text = @"我我问问我我我我我我";
+    label.font = [UIFont systemFontOfSize:14];
+    label.textColor = [UIColor whiteColor];
+    [view addSubview:label];
+    self.label = label;
+    
+    [view addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(leftBtnClick)]];
+    
+}
+
+- (void)leftBtnClick{
+    
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+    NSString *phone = [def objectForKey:@"phone"];
+    
+    if (phone.length == 0 || phone == nil) {
+        LXAlertView *alertV = [[LXAlertView alloc] initWithTitle:@"登录确认" message:@"你尚未登录\n如没有账号, 请先注册" cancelBtnTitle:@"登录" otherBtnTitle:@"注册" clickIndexBlock:^(NSInteger clickIndex) {
+            NSLog(@"%ld", clickIndex);
+            if (clickIndex == 0) {
+                //进入登录界面
+                [self presentLoginVC];
+                
+            }else{
+                
+                //进入注册页面
+                [self presentRegisterVC];
+            }
+        }];
+        alertV.animationStyle = LXASAnimationTopShake;
+        [alertV showLXAlertView];
+    }else{
+        UIStoryboard *stb = [UIStoryboard storyboardWithName:@"GYDoorTableViewController" bundle:nil];
+        GYDoorTableViewController *vc = [stb instantiateInitialViewController];
+        self.hidesBottomBarWhenPushed = YES;
+        [self.navigationController pushViewController:vc animated:YES];
+        self.hidesBottomBarWhenPushed = NO;
+    }
+    
+    
+
+}
+
+// 摇一摇开始方法
+-(void)motionBegan:(UIEventSubtype)motion withEvent:(UIEvent *)event{
+    
+    
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"shakeOpenSwitch"] isEqualToString:@"1"]){
+        // 添加动画
+        PulsingHaloLayer*halo = [PulsingHaloLayer layer];
+        halo.position = CGPointMake(screenW/2, screenH - 25);
+        [self.tabBarController.view.layer addSublayer:halo];
+        halo.haloLayerNumber = 3 ;
+        halo.radius = 500 ;
+        halo.backgroundColor = [COLOR(243, 84, 62, 0.7) CGColor];
+        halo.animationDuration = 2.5;
+        [halo start];
+        
+        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+        
+        // 取出Userdefault里面的电话
+        NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+        NSString *phone = [def valueForKey:@"phone"];
+        // 如果有保存到账号
+        if (phone.length != 0) {
+            JWNetWorking *mgr = [JWNetWorking sharedManager];
+            NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+            parameters[@"mobile"] = phone;
+            [mgr getRequestWithUrl:GYGetKeyListURL parameter:parameters successBlock:^(id responseBody) {
+                // 解析数据
+                NSDictionary *dic = responseBody[@"extra"];
+                NSArray *arr = dic[@"ResidentsKeyList"];
+                _devArr = [GYDevModel mj_objectArrayWithKeyValuesArray:arr];
+                GYDevModel *model1 = _devArr.lastObject;
+                NSLog(@"转化模型后的ekey为%@", model1.ekey);
+                
+                // *************** 开门 *****************
+                [JWDoorTool openDoorWithTarget:self andValidDeviceArr:_devArr andHaloLayer:halo tabBarVC:nil];
+                
+            } failureBlock:^(NSString *error) {
+                [halo removeFromSuperlayer];
+                [JWAlert showMsg:@"网络堵塞,请重试" WithOwner:self];
+
+            }];
+        }else{
+            
+            [halo removeFromSuperlayer];
+            [JWAlert showMsg:@"请先登录.." WithOwner:self];
+        }
+        
+    }
+    
+    return;
+}
+
+
+#pragma mark - 初始化方法
+
+// 初始化
+- (void)initial{
+    self.navigationItem.title = @"首页";
+    self.view.backgroundColor = [UIColor clearColor];
+    
+}
+
+// 创建collectionView
+- (void)creatCollectionView{
+    
+    //适配banner高度
+    CGFloat newHeaderH = bannerH;
+    if (iPhone5) {
+        newHeaderH = bannerH * 568 / 667;
+    }
+    
+    // 创建collectionView布局
+    UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
+    layout.minimumLineSpacing = 0;
+    layout.minimumInteritemSpacing = 0;
+    layout.scrollDirection = UICollectionViewScrollDirectionVertical;
+    layout.sectionInset = UIEdgeInsetsMake(0, 0, 0, 0);
+    layout.headerReferenceSize = CGSizeMake(screenW, lineViewH);  //头部视图大小
+    
+    
+ /*   // VV flowlayout
+    VVSpringCollectionViewFlowLayout *layout = [[VVSpringCollectionViewFlowLayout alloc] init];
+    layout.springDamping = 1;
+    layout.springFrequency = 0;
+    layout.resistanceFactor = 1000;
+    layout.minimumLineSpacing = 0;
+    layout.minimumInteritemSpacing = 0;
+//    layout.scrollDirection=UICollectionViewScrollDirectionVertical;
+    layout.sectionInset = UIEdgeInsetsMake(0, 0, 0, 0);
+    self.layout = layout;
+    //layout.headerReferenceSize = CGSizeMake(screenW, newHeaderH);  //头部视图大小
+*/
+    
+    // 创建collectionView
+    UICollectionView *collectionV = [[UICollectionView alloc] initWithFrame:CGRectMake(0, newHeaderH + headerCollectionViewH, screenW, screenH + 150) collectionViewLayout:layout];
+    collectionV.dataSource = self;
+    collectionV.delegate = self;
+    collectionV.tag = 1;
+    collectionV.contentSize = CGSizeMake(screenW, screenH + 200);
+    collectionV.alwaysBounceVertical = YES;
+    collectionV.backgroundColor = [UIColor whiteColor];
+    collectionV.scrollEnabled = NO;
+    [self.scrollV addSubview:collectionV];
+    _collectionV = collectionV;
+    
+
+    // 注册collectionView Cell
+    [collectionV registerNib:[UINib nibWithNibName:@"GYMainCollectionViewCell" bundle:nil] forCellWithReuseIdentifier:ID];
+    
+    //注册collectionView头部视图
+    [collectionV registerClass:[GYCollectionReusableView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:HeaderID];
+    
+    
+    // 注册头部 collectionView Cell
+    [collectionV registerNib:[UINib nibWithNibName:@"GYHeaderCollectionViewCell" bundle:nil] forCellWithReuseIdentifier:headerCollectionID];
+}
+
+
+#pragma mark - collection View Delegate
+
+
+
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView{
+    if (1 == collectionView.tag) { // 如果是服务列表collection view ************************
+        return 3;
+    }else if (2 == collectionView.tag){  // 如果是头部视图的collection view ************************
+        return 1;
+    }
+    return 0;
+}
+
+#warning 在此设置collection view的item个数 ************************************************
+// 返回item个数
+-(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section{
+    if (1 == collectionView.tag) { // 如果是服务列表collection view ************************
+        if (2 == section) {
+            return 2;
+        }
+        return 4;
+    }else if (2 == collectionView.tag){  // 如果是头部视图的collection view ************************
+        return 4;
+    }
+    return 0;
+
+}
+
+#warning 在此添加collection view的内容 ************************************************
+// 返回cell
+-(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
+    
+    if (1 == collectionView.tag) { // 如果是服务列表collection view ************************
+        GYMainCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:ID forIndexPath:indexPath];
+ /*
+        switch (indexPath.section) {
+            case 0:
+                
+                cell.cellImage.image = [UIImage imageNamed:self.imageArrSer[indexPath.row]];
+                
+                cell.titleLabel.text = self.cellTitleArrSer[indexPath.row];
+                
+                cell.titleLabel.textColor = self.cellTitleColorArrSer[indexPath.row];
+                cell.subtitleLabel.text = self.cellSubTitleArrSer[indexPath.row];
+                break;
+            case 1:
+                
+                cell.cellImage.image = [UIImage imageNamed:self.imageArrSer[indexPath.row + 4]];
+                
+                cell.titleLabel.text = self.cellTitleArrSer[indexPath.row + 4];
+                
+                cell.titleLabel.textColor = self.cellTitleColorArrSer[indexPath.row + 4];
+                cell.subtitleLabel.text = self.cellSubTitleArrSer[indexPath.row + 4];
+                break;
+            case 2:
+                
+                cell.cellImage.image = [UIImage imageNamed:self.imageArrSer[indexPath.row + 8]];
+                
+                cell.titleLabel.text = self.cellTitleArrSer[indexPath.row + 8];
+                
+                cell.titleLabel.textColor = self.cellTitleColorArrSer[indexPath.row + 8];
+                cell.subtitleLabel.text = self.cellSubTitleArrSer[indexPath.row + 8];
+                break;
+                
+            default:
+                break;
+        }
+    */
+        cell.cellImage.image = [UIImage imageNamed:self.imageArrSer[indexPath.row + indexPath.section * 4]];
+        
+        cell.titleLabel.text = self.cellTitleArrSer[indexPath.row + indexPath.section * 4];
+        
+        cell.titleLabel.textColor = self.cellTitleColorArrSer[indexPath.row + indexPath.section * 4];
+        
+        cell.subtitleLabel.text = self.cellSubTitleArrSer[indexPath.row + indexPath.section * 4];
+        
+        return cell;
+        
+    }else if (2 == collectionView.tag){ // 如果是头部视图的collection view ************************
+        GYHeaderCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:headerCollectionID forIndexPath:indexPath];
+        cell.cellImage.image = [UIImage imageNamed:self.imageArr[indexPath.row]];
+        cell.cellLabel.text = self.cellTitleArr[indexPath.row];
+        return cell;
+
+    }
+    return nil;
+}
+
+#warning 在此响应collection view的点击 ************************************************
+// 点击cell调用
+-(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
+    if (2 == collectionView.tag) { // 头部collection **************
+        NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+        if ([def objectForKey:@"phone"] != nil) {
+            
+            if (indexPath.row == 1 || indexPath.row == 0) {
+                LXAlertView *v = [[LXAlertView alloc] initWithTitle:@"提示" message:@"该小区暂未开放此功能" cancelBtnTitle:@"我知道了" otherBtnTitle:nil clickIndexBlock:^(NSInteger clickIndex) {
+                }];
+                v.smallCancelBtn.hidden = YES;
+                [v showLXAlertView];
+            }else{
+                UIStoryboard *stb = [UIStoryboard storyboardWithName:self.controllersArr[indexPath.row] bundle:nil];
+                UIViewController *vc = [stb instantiateInitialViewController];
+                self.hidesBottomBarWhenPushed = YES;
+                
+                [self.navigationController pushViewController:vc animated:YES];
+                self.hidesBottomBarWhenPushed = NO;
+                
+            }
+            
+        }else{
+            // 弹框提示
+            //        [JWAlert showMsg:@"请先登录" WithOwner:self];
+            LXAlertView *alertV = [[LXAlertView alloc] initWithTitle:@"登录确认" message:@"你尚未登录\n如没有账号, 请先注册" cancelBtnTitle:@"登录" otherBtnTitle:@"注册" clickIndexBlock:^(NSInteger clickIndex) {
+                if (clickIndex == 0) {
+                    //进入登录界面
+                    [self presentLoginVC];
+                    
+                }else{
+                    
+                    //进入注册页面
+                    [self presentRegisterVC];
+                }
+            }];
+            alertV.animationStyle = LXASAnimationTopShake;
+            [alertV showLXAlertView];
+        }
+    }else{ //  服务 collection **************
+        
+#warning 在此写九大服务的cell响应点击.*****************************************************
+        
+        GYMainCollectionViewCell *cell = [collectionView cellForItemAtIndexPath:indexPath];
+        if ([cell.titleLabel.text isEqualToString:@"日常保洁"] ) {
+            GYLog(@"我草泥马");
+            
+            UIStoryboard *stb = [UIStoryboard storyboardWithName:@"GYApplianceViewController" bundle:nil];
+            GYApplianceViewController *vc1 = [stb instantiateInitialViewController];
+            self.hidesBottomBarWhenPushed = YES;
+            [self.navigationController pushViewController:vc1 animated:YES];
+            self.hidesBottomBarWhenPushed = NO;
+        }
+        if ([cell.titleLabel.text isEqualToString:@"保姆"] ) {
+            
+            GYNannyViewController *vc2 = [[GYNannyViewController alloc] initWithNibName:@"GYNannyViewController" bundle:nil];
+            
+            self.hidesBottomBarWhenPushed = YES;
+            [self.navigationController pushViewController:vc2 animated:YES];
+            
+            GYLog(@"我草泥马1");
+        }
+        if ([cell.titleLabel.text isEqualToString:@"家电保洁"] ) {
+            GYLog(@"我草泥马2");
+        }
+        if ([cell.titleLabel.text isEqualToString:@"深度/开荒"] ) {
+            GYLog(@"我草泥马3");
+        }
+        if ([cell.titleLabel.text isEqualToString:@"月嫂"] ) {
+            GYLog(@"我草泥马4");
+        }
+        if ([cell.titleLabel.text isEqualToString:@"育婴师"] ) {
+            GYLog(@"我草泥马5");
+        }
+        if ([cell.titleLabel.text isEqualToString:@"催乳师"] ) {
+            GYLog(@"我草泥马6");
+        }
+        if ([cell.titleLabel.text isEqualToString:@"小儿推拿"] ) {
+            GYLog(@"我草泥马7");
+        }
+        if ([cell.titleLabel.text isEqualToString:@"护工"] ) {
+            GYLog(@"我草泥马8");
+        }
+
+        
+    }
+   
+    
+}
+
+
+// 进入登录界面************
+- (void)presentLoginVC{
+    
+    UIStoryboard *loginStb = [UIStoryboard storyboardWithName:@"GYLoginViewController" bundle:nil];
+    GYLoginViewController *loginVC = [loginStb instantiateInitialViewController];
+    GYNavigationController *navVC = [[GYNavigationController alloc] initWithRootViewController:loginVC];
+    navVC.navigationBar.hidden = YES;
+    [self presentViewController:navVC animated:YES completion:nil];
+    
+    
+}
+
+// 进入注册界面************
+- (void)presentRegisterVC{
+    UIStoryboard *regisStb = [UIStoryboard storyboardWithName:@"GYRegisterViewController" bundle:nil];
+    GYRegisterViewController *registerVC = [regisStb instantiateInitialViewController];
+    [self presentViewController:registerVC animated:YES completion:nil];
+}
+
+
+// 设置每个item的大小
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath{
+    if (1 == collectionView.tag) {
+        CGFloat newItemH = itemH;
+        if (iPhone5) {
+            newItemH = itemH - 10;
+        }
+        
+        return CGSizeMake(itemW, newItemH);
+    }else{
+        return CGSizeMake(headerItemW, headerCollectionViewH);
+    }
+
+        
+
+}
+
+
+#pragma mark - 设置collection view头部视图的方法
+
+// 返回头部视图
+-(UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath{
+    // 如果是头部视图
+    if ([kind isEqualToString:UICollectionElementKindSectionHeader]) {
+        
+        
+        
+            GYCollectionReusableView *headerV = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:HeaderID forIndexPath:indexPath];
+            self.headerV = headerV;
+        
+            // 添加头部collection view
+           // [self creatHeaderCollectionV];
+            
+            
+            // 添加轮播图
+            //[self creatRoundScrollView];
+            
+            // 添加title
+        [self addLineViewWithIndex:indexPath];
+        
+            
+            
+            return headerV;
+  
+  
+    }
+    return nil;
+}
+
+- (void)addLineViewWithIndex:(NSIndexPath *)indexPath{
+    GYLineView *lineV = [GYLineView lineView];
+    CGFloat newLineViewH = lineViewH;
+    
+    if (iPhone5) {
+        newLineViewH = (lineViewH * 568) / 667;
+    }
+  
+    NSString *imgStr = [NSString stringWithFormat:@"headertitle%ld", (indexPath.section + 1)];
+    lineV.titleImg.image = [UIImage imageNamed:imgStr];
+    lineV.frame = CGRectMake(0, 0, screenW, newLineViewH);
+    [self.headerV addSubview:lineV];
+}
+
+// 添加头部collection view
+- (void)creatHeaderCollectionV{
+    UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
+    layout.minimumLineSpacing = headerSpace;
+    layout.minimumInteritemSpacing = headerSpace;
+    layout.sectionInset = UIEdgeInsetsMake(0, headerSpace, 0, headerSpace);
+    
+    UICollectionView *headerCollectionV = [[UICollectionView alloc] initWithFrame:CGRectMake(0, 0, screenW, headerCollectionViewH) collectionViewLayout:layout];
+    headerCollectionV.backgroundColor = [UIColor whiteColor];
+    [self.scrollV addSubview:headerCollectionV];
+    headerCollectionV.tag = 2;
+    headerCollectionV.delegate = self;
+    headerCollectionV.dataSource = self;
+    
+    [headerCollectionV registerNib:[UINib nibWithNibName:@"GYHeaderCollectionViewCell" bundle:nil] forCellWithReuseIdentifier:headerCollectionID];
+    
+}
+
+#warning 在此设置轮播图的内容 ************************************************
+
+// 创建轮播图
+- (void)creatRoundScrollView{
+    CGFloat newBannerH = bannerH;
+    
+    if (iPhone5) {
+        newBannerH = (bannerH * 568) / 667;
+    }
+    _holderV = [[UIImageView alloc] initWithFrame:CGRectMake(0, headerCollectionViewH, screenW, newBannerH)];
+    _holderV.image = [UIImage imageNamed:@"banner"];
+    [self.scrollV addSubview:_holderV];
+    
+    NSMutableArray *bannerArr = [NSMutableArray array];
+    // get banner images
+    JWNetWorking *mgr = [JWNetWorking sharedManager];
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"type"] = @"1";
+    [mgr getRequestWithUrl:GYBannerURL parameter:parameters successBlock:^(id responseBody) {
+        NSDictionary *extraDic = responseBody[@"extra"];
+        NSArray *Arr = extraDic[@"banners"];
+        _bannerModelArr = [GYBannerModel mj_objectArrayWithKeyValuesArray:Arr];
+        for (GYBannerModel *model in _bannerModelArr) {
+            [bannerArr addObject:model.pic];
+        }
+        
+        CGFloat newBannerH = bannerH;
+
+        if (iPhone5) {
+            newBannerH = (bannerH * 568) / 667;
+        }
+        
+        SDCycleScrollView *bannerV = [SDCycleScrollView cycleScrollViewWithFrame:CGRectMake(0, headerCollectionViewH, screenW, newBannerH) imageURLStringsGroup:bannerArr];
+        if (_bannerModelArr.count == 1) {
+            bannerV.infiniteLoop = NO;
+        }else{
+            bannerV.infiniteLoop = YES;
+            bannerV.titlesGroup = @[@"", @"", @""];
+            bannerV.titleLabelHeight = 20;
+        }
+        bannerV.pageControlStyle = SDCycleScrollViewPageContolStyleAnimated;
+        bannerV.delegate = self;
+        bannerV.pageControlAliment = SDCycleScrollViewPageContolAlimentCenter;
+        bannerV.autoScrollTimeInterval = 3;
+        bannerV.pageControlDotSize = CGSizeMake(7, 7);
+
+        bannerV.pageControlBottomOffset = -3;
+        bannerV.placeholderImage = [UIImage imageNamed:@"banner"];
+        self.bannerV = bannerV;
+        [self.scrollV addSubview:bannerV];
+        GYLog(@"banner res %@", responseBody);
+//        [self addLineView];
+
+    } failureBlock:^(NSString *error) {
+        GYLog(@"banner error %@", error);
+    }];
+    
+
+    
+//    SDCycleScrollView *bannerV = [SDCycleScrollView cycleScrollViewWithFrame:CGRectMake(0, 0, screenW, newBannerH) imageNamesGroup:bannerArr];
+ 
+}
+
+#pragma mark - 轮播图代理
+
+- (void)cycleScrollView:(SDCycleScrollView *)cycleScrollView didSelectItemAtIndex:(NSInteger)index{
+    GYLog(@"点击了第%ld张广告",index);
+
+}
+
+@end

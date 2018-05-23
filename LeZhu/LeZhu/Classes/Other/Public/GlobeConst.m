@@ -1,0 +1,84 @@
+//
+//  GlobeConst.m
+//  LeZhu
+//
+//  Created by apple on 17/2/15.
+//  Copyright © 2017年 guanyue. All rights reserved.
+//
+
+#import "GlobeConst.h"
+
+// NSString * const GYMainURL = @"http://192.168.1.200:8080/lezhu";// 内网
+
+NSString * const GYMainURL = @"http://lezhuapp.com/lezhu";// 正式网
+
+//忘记密码
+NSString * const GYForgetPwdURL = @"http://lezhuapp.com/lezhu/api/v1/account/forgetpwd?";
+
+//发送密码
+NSString * const GYSentCodeURL = @"http://lezhuapp.com/lezhu/api/v1/account/sendCode?";
+
+//登录
+NSString * const GYPwdLoginURL = @"http://lezhuapp.com/lezhu/api/v1/account/login?";
+
+//注册
+NSString * const GYRegisterURL = @"http://lezhuapp.com/lezhu/api/v1/account/register?";
+
+NSString * const GYGetResidentsURL = @"http://lezhuapp.com/lezhu/api/v1/cms/getResidents?";
+
+NSString * const GYGetKeyListURL = @"http://lezhuapp.com/lezhu/api/v1/cms/getResidentsKey?";
+
+//获取临时开门密码
+NSString * const GYGetPasswordURL = @"http://lezhuapp.com/lezhu/api/v1/cms/getTempOpenDoorPwd?";
+
+//修改信息
+NSString * const GYChangeInfoURL = @"http://lezhuapp.com/lezhu/api/v1/cms/updateUserData?";
+
+//反馈信息
+NSString * const GYFeedbackURL = @"http://lezhuapp.com/lezhu/api/v1/cms/addfeedback?";
+
+//获取物业信息
+NSString * const GYNoticeURL = @"http://lezhuapp.com/lezhu/api/v1/cms/getWYNotice?";
+
+NSString * const GYSentCodeLoginURL = @"http://lezhuapp.com/lezhu/api/v1/account/sendCodeFast?";
+
+NSString * const GYCheckCodeURL = @"http://lezhuapp.com/lezhu/api/v1/account/checkCode?";
+
+NSString * const GYCodeLoginURL = @"http://lezhuapp.com/lezhu/api/v1/account/loginscode?";
+
+NSString * const GYXQListURL = @"http://lezhuapp.com/lezhu/api/v1/cms/getEntranceGuardXiaoquList?";
+
+NSString * const GYApproveURL = @"http://lezhuapp.com/lezhu/api/v1/cms/addResidents?";
+
+NSString * const GYGetHouseURL = @"http://lezhuapp.com/lezhu/api/v1/cms/getBuildingHouse?";
+
+NSString * const GYGetXQURL = @"http://lezhuapp.com/lezhu/api/v1/cms/findResidentsEntranceGuardXiaoqu?";
+
+NSString * const GYGetXQDevicesURL = @"http://lezhuapp.com/lezhu/api/v1/cms/findResidentsEntranceGuard?";
+
+NSString * const GYAddOpenDoorRecordURL = @"http://lezhuapp.com/lezhu/api/v1/cms/saveOpenDoor?";
+
+NSString * const GYBannerURL = @"http://lezhuapp.com/lezhu/api/v1/cms/banner";
+
+NSString * const GYTestDefaultAddressURL = @"http://192.168.0.117:8080/LifeService/appAddress//app/updateDefaultAddr.do?";
+
+NSString * const GYChangeAddressURL = @"http://192.168.0.117:8080/LifeService/appAddress/app/saveAndUpdate.do";
+
+
+NSString * const GYDeleteAddressURL = @"http://192.168.0.117:8080/LifeService/appAddress/app/deleteByCaid.do";
+
+NSString * const GYSaveOrdersURL = @"http://192.168.0.117:8080/LifeService/order/app/appSaveOrderLog.do?";
+
+
+NSString * const GYWeChatPayURL = @"https://api.mch.weixin.qq.com/pay/unifiedorder";
+
+NSString * const GYFinishOrderURL = @"http://192.168.0.117:8080/LifeService/order/app/payOrder.do";
+
+NSString * const GYPayURL = @"http://192.168.0.117:8080/LifeService/order/app/appOrderPay.do";
+
+NSString * const GYCheckOutOrdersURL = @"http://192.168.0.117:8080/LifeService/order/app/selectByState.do";
+
+
+NSString * const GYApplianceWashURL = @"http://192.168.0.117:8080/LifeService/appAddress/app/toAppliances.do";
+
+

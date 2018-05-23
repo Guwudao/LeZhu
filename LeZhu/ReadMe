@@ -1,0 +1,19 @@
+NSUserDefault Key:
+name昵称   phone电话(账号)  password密码  myXQ我的小区 myHouseName房屋名  myBdName楼栋名
+
+myDistrict我的城市区域 uid用户id   userIconData用户头像data    wuyeid物业id
+
+友盟app key: 58b83b0976661340ce000e83
+
+服务类型ID
+[{"image":"/upload/1482826123867.png","typeName":"日常保洁","id":1},{"image":"/upload/1482825442386.png","typeName":"家电保洁","id":2},{"image":"/upload/1482826736616.png","typeName":"深度保洁","id":3},{"image":"/upload/1482826751854.png","typeName":"保姆","id":4},{"image":"/upload/1482826777093.png","typeName":"月嫂","id":5},{"image":"/upload/1482826786018.png","typeName":"护工","id":6},{"image":"/upload/1482826799650.png","typeName":"育婴师","id":7},{"image":"/upload/1482826816473.png","typeName":"催乳师","id":8},{"image":"/upload/1482826846723.png","typeName":"小儿推拿","id":9}]
+
+
+// 弹框提示
+UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"提示" message:msg preferredStyle:UIAlertControllerStyleAlert];
+[self presentViewController:alertController animated:YES completion:nil];
+dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+[alertController dismissViewControllerAnimated:YES completion:nil];
+});
+
+

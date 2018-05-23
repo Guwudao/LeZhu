@@ -1,0 +1,13 @@
+//
+//  DateTextF.h
+//  04-自定义键盘
+//
+//  Created by xmg1 on 16/9/2.
+//  Copyright © 2016年 小码哥. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface DateTextF : UITextField
+
+@end

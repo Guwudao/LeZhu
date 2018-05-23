@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 182
+/svn/LifeService/!svn/ver/1078/trunk/Life_c_ios/LeZhu(%E9%97%A8%E7%A6%81+%E5%AE%B6%E6%94%BF)%20/LeZhu/Classes/Other/Third/UMSocial/SocialLibraries/QQ/TencentOpenAPI.framework/Headers
+END
+TencentApiInterface.h
+K 25
+svn:wc:ra_dav:version-url
+V 204
+/svn/LifeService/!svn/ver/1078/trunk/Life_c_ios/LeZhu(%E9%97%A8%E7%A6%81+%E5%AE%B6%E6%94%BF)%20/LeZhu/Classes/Other/Third/UMSocial/SocialLibraries/QQ/TencentOpenAPI.framework/Headers/TencentApiInterface.h
+END
+QQApiInterface.h
+K 25
+svn:wc:ra_dav:version-url
+V 199
+/svn/LifeService/!svn/ver/1078/trunk/Life_c_ios/LeZhu(%E9%97%A8%E7%A6%81+%E5%AE%B6%E6%94%BF)%20/LeZhu/Classes/Other/Third/UMSocial/SocialLibraries/QQ/TencentOpenAPI.framework/Headers/QQApiInterface.h
+END
+TencentMessageObject.h
+K 25
+svn:wc:ra_dav:version-url
+V 205
+/svn/LifeService/!svn/ver/1078/trunk/Life_c_ios/LeZhu(%E9%97%A8%E7%A6%81+%E5%AE%B6%E6%94%BF)%20/LeZhu/Classes/Other/Third/UMSocial/SocialLibraries/QQ/TencentOpenAPI.framework/Headers/TencentMessageObject.h
+END
+sdkdef.h
+K 25
+svn:wc:ra_dav:version-url
+V 191
+/svn/LifeService/!svn/ver/1078/trunk/Life_c_ios/LeZhu(%E9%97%A8%E7%A6%81+%E5%AE%B6%E6%94%BF)%20/LeZhu/Classes/Other/Third/UMSocial/SocialLibraries/QQ/TencentOpenAPI.framework/Headers/sdkdef.h
+END
+TencentOAuth.h
+K 25
+svn:wc:ra_dav:version-url
+V 197
+/svn/LifeService/!svn/ver/1078/trunk/Life_c_ios/LeZhu(%E9%97%A8%E7%A6%81+%E5%AE%B6%E6%94%BF)%20/LeZhu/Classes/Other/Third/UMSocial/SocialLibraries/QQ/TencentOpenAPI.framework/Headers/TencentOAuth.h
+END
+QQApiInterfaceObject.h
+K 25
+svn:wc:ra_dav:version-url
+V 205
+/svn/LifeService/!svn/ver/1078/trunk/Life_c_ios/LeZhu(%E9%97%A8%E7%A6%81+%E5%AE%B6%E6%94%BF)%20/LeZhu/Classes/Other/Third/UMSocial/SocialLibraries/QQ/TencentOpenAPI.framework/Headers/QQApiInterfaceObject.h
+END
+TencentOAuthObject.h
+K 25
+svn:wc:ra_dav:version-url
+V 203
+/svn/LifeService/!svn/ver/1078/trunk/Life_c_ios/LeZhu(%E9%97%A8%E7%A6%81+%E5%AE%B6%E6%94%BF)%20/LeZhu/Classes/Other/Third/UMSocial/SocialLibraries/QQ/TencentOpenAPI.framework/Headers/TencentOAuthObject.h
+END

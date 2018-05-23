@@ -1,0 +1,274 @@
+//
+//  OrderPageViewController.m
+//  LeZhu
+//
+//  Created by JJ on 17/4/14.
+//  Copyright © 2017年 guanyue. All rights reserved.
+//
+
+#import "OrderPageViewController.h"
+#import "WXApi.h"
+#import "GYShowOrderViewController.h"
+
+@interface OrderPageViewController ()
+@property (weak, nonatomic) IBOutlet UIView *timeView;
+@property (weak, nonatomic) IBOutlet UILabel *timeCountLabel;
+
+@property(nonatomic,assign) NSInteger min;
+@property(nonatomic,assign) NSInteger sec;
+
+//名称
+@property (weak, nonatomic) IBOutlet UILabel *infoLabel1;
+@property (weak, nonatomic) IBOutlet UILabel *infoLabel2;
+@property (weak, nonatomic) IBOutlet UILabel *infoLabel3;
+@property (weak, nonatomic) IBOutlet UILabel *infoLabel4;
+@property (weak, nonatomic) IBOutlet UILabel *infoLabel5;
+@property (weak, nonatomic) IBOutlet UILabel *infoLabel6;
+@property (weak, nonatomic) IBOutlet UILabel *infoLabel7;
+@property (weak, nonatomic) IBOutlet UILabel *infoLabel8;
+
+//订单类型
+@property (weak, nonatomic) IBOutlet UILabel *typeInfoLable;
+
+//详细内容
+@property (weak, nonatomic) IBOutlet UILabel *detailLable1;
+@property (weak, nonatomic) IBOutlet UILabel *detailLable2;
+@property (weak, nonatomic) IBOutlet UILabel *detailLable3;
+@property (weak, nonatomic) IBOutlet UILabel *detailLable4;
+@property (weak, nonatomic) IBOutlet UILabel *detailLable5;
+@property (weak, nonatomic) IBOutlet UILabel *detailLable6;
+@property (weak, nonatomic) IBOutlet UILabel *detailLable7;
+@property (weak, nonatomic) IBOutlet UILabel *detailLable8;
+
+//总价
+@property (weak, nonatomic) IBOutlet UILabel *totalPriceLable;
+@property (weak, nonatomic) IBOutlet UILabel *singlePriceLabel;
+
+//支付价格
+@property (weak, nonatomic) IBOutlet UILabel *payLabel;
+
+//支付按钮
+@property (weak, nonatomic) IBOutlet UIButton *payBtn;
+
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *white;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *green;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *purple;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *blue;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *darkblue;
+
+
+@property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
+
+@property(nonatomic,strong) NSTimer *timer;
+
+
+
+@end
+
+@implementation OrderPageViewController
+
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    //屏幕适配
+    [self screenAdaptive];
+    
+    //发送网络请求获取订单详情
+    [self setupOrderInfo];
+    
+    //设置倒计时10分钟
+    [self timeCountDown];
+    
+    //设置订单将要显示细节的标题
+    [self informationShow];
+}
+
+//屏幕适配
+-(void)screenAdaptive{
+    self.white.constant = screenW;
+    self.green.constant = screenW;
+    self.purple.constant = screenW;
+    self.blue.constant = screenW;
+    self.darkblue.constant = screenW;
+    
+    self.scrollView.scrollEnabled = YES;
+    self.scrollView.contentSize = CGSizeMake(1000, 1000);
+    //    self.scrollView.contentOffset = CGPointMake(1000, 1000);
+}
+
+//发送网络请求获取订单详情
+-(void)setupOrderInfo{
+    
+    if ([_dataType isEqualToString:@"家电保洁"]){
+        
+        NSMutableDictionary *parameter = [NSMutableDictionary dictionary];
+        parameter[@"id"] = self.orderID;
+        
+        JWNetWorking *mgr = [JWNetWorking sharedManager];
+        [mgr postRequestWithUrl:GYFinishOrderURL parameter:parameter successBlock:^(id responseBody) {
+            
+            self.detailLable1.text = responseBody[@"data"][0][@"strCreateTime"];
+            self.detailLable2.text = responseBody[@"data"][0][@"typeName"];
+            NSString *hours = [NSString stringWithFormat:@"%@",responseBody[@"data"][0][@"hours"]];
+            self.detailLable3.text = hours;
+
+            NSString *singlePrice = [responseBody[@"data"][0][@"expectPrice"] stringByAppendingString:@"/小时"];
+            self.detailLable4.text = singlePrice;
+            
+            self.detailLable5.text = responseBody[@"data"][0][@"serviceContact"];
+            self.detailLable6.text = responseBody[@"data"][0][@"servicePhone"];
+            self.detailLable7.text =  responseBody[@"data"][0][@"serviceAddress"];
+
+            //订单总价
+            NSString *price = [NSString stringWithFormat:@"￥ %@.0元",responseBody[@"data"][0][@"price"]];
+            self.totalPriceLable.text = price;
+            
+            NSString *expectPrice = [responseBody[@"data"][0][@"expectPrice"] stringByAppendingString:@".0 元"];
+            self.singlePriceLabel.text = expectPrice;
+            
+            //实付款
+            self.payLabel.text = price;
+            
+            [SVProgressHUD dismiss];
+            
+        } failureBlock:^(NSString *error) {
+            [SVProgressHUD dismiss];
+
+            GYLog(@"OrderPageViewController %@",error);
+        }];
+    }
+    
+}
+
+//设置订单将要显示细节的标题
+-(void)informationShow{
+    
+    if ([_dataType isEqualToString:@"家电保洁"]) {
+        
+        self.infoLabel1.text = @"服务开始时间：";
+        self.infoLabel2.text = @"服务类型：";
+        self.infoLabel3.text = @"保洁时长：";
+        self.infoLabel4.text = @"单价：";
+        self.infoLabel5.text = @"联系人：";
+        self.infoLabel6.text = @"联系电话：";
+        self.infoLabel7.text = @"联系人地址：";
+        self.infoLabel8.hidden = YES;
+        self.detailLable8.hidden = YES;
+        
+        self.typeInfoLable.text = _dataType;
+    }
+}
+
+
+
+//设置倒计时
+-(void)timeCountDown{
+    self.min = 9;
+    self.sec = 59;
+    
+    NSTimer *timer = [NSTimer timerWithTimeInterval:1.0 repeats:YES block:^(NSTimer * _Nonnull timer) {
+        
+        
+        if (self.min >= 0) {
+            self.sec -= 1;
+            
+            if (self.min == 0 && self.sec == 0) {
+                GYLog(@"倒计时结束");
+                
+                self.payBtn.selected = NO;
+                self.payBtn.backgroundColor = [UIColor grayColor];
+                [timer invalidate];
+                timer = nil;
+            }
+            if (self.sec < 0) {
+                
+                self.sec = 59;
+                self.min -= 1;
+                
+            }
+            self.timeCountLabel.text = [NSString stringWithFormat:@"%ld 分 %ld 秒",_min,_sec];
+        }else{
+            NSLog(@"倒计时结束");
+            [timer invalidate];
+            timer = nil;
+        }
+    }];
+    
+    NSRunLoop *loop =  [NSRunLoop mainRunLoop];
+    [loop addTimer:timer forMode:NSDefaultRunLoopMode];
+}
+
+
+-(void)dealloc{
+    
+}
+
+//确定支付按钮
+- (IBAction)payBtn:(UIButton *)sender {
+    
+    if ([_dataType isEqualToString:@"家电保洁"]) {
+        
+        NSMutableDictionary *parameter = [NSMutableDictionary dictionary];
+        parameter[@"orderId"] = self.orderID;
+        
+        JWNetWorking *mgr = [JWNetWorking sharedManager];
+        [mgr postRequestWithUrl:GYPayURL parameter:parameter successBlock:^(id responseBody) {
+            
+            /*
+            GYLog(@"支付信息： %@",responseBody);
+            //需要创建这个支付对象
+            PayReq *req   = [[PayReq alloc] init];
+            //由用户微信号和AppID组成的唯一标识，用于校验微信用户
+            req.openID = responseBody[@"data"][@"appid"];
+            
+            // 商家id，在注册的时候给的
+            req.partnerId = responseBody[@"data"][@"partnerid"];
+            
+            // 预支付订单这个是后台跟微信服务器交互后，微信服务器传给你们服务器的，你们服务器再传给你
+            req.prepayId  = responseBody[@"data"][@"prepayid"];
+            
+            // 根据财付通文档填写的数据和签名
+            //这个比较特殊，是固定的，只能是即req.package = Sign=WXPay
+            req.package   = responseBody[@"data"][@"package"];
+            
+            // 随机编码，为了防止重复的，在后台生成
+            req.nonceStr  = responseBody[@"data"][@"noncestr"];
+            
+            // 这个是时间戳，也是在后台生成的，为了验证支付的
+            NSString * stamp = responseBody[@"data"][@"timestamp"];
+            req.timeStamp = stamp.intValue;
+            
+            // 这个签名也是后台做的
+            req.sign = responseBody[@"data"][@"sign"];
+            
+            //发送请求到微信，等待微信返回onResp
+            [WXApi sendReq:req];
+             */
+            
+        } failureBlock:^(NSString *error) {
+            
+            GYLog(@"支付信息： %@",error);
+        }];
+    }
+    
+    
+    //跳转到订单页面
+    GYShowOrderViewController *coVc = [[GYShowOrderViewController alloc] init];
+    [self.navigationController pushViewController:coVc animated:YES];
+
+}
+
+
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

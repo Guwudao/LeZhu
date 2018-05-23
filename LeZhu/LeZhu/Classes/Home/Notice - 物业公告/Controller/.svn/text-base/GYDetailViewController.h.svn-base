@@ -1,0 +1,15 @@
+//
+//  GYDetailViewController.h
+//  LeZhu
+//
+//  Created by apple on 17/3/7.
+//  Copyright © 2017年 guanyue. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface GYDetailViewController : UIViewController
+
+@property(nonatomic, copy)NSString *detailStr; // HTML5字符串
+
+@end

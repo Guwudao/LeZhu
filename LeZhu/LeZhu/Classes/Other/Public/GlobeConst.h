@@ -1,0 +1,100 @@
+//
+//  GlobeConst.h
+//  LeZhu
+//
+//  Created by apple on 17/2/15.
+//  Copyright © 2017年 guanyue. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+
+/** 忘记密码URL */
+UIKIT_EXTERN NSString * const GYForgetPwdURL;
+
+/** 发送验证码URL */
+UIKIT_EXTERN NSString * const GYSentCodeURL;
+
+/** 密码登录URL */
+UIKIT_EXTERN NSString * const GYPwdLoginURL;
+
+/** 注册URL */
+UIKIT_EXTERN NSString * const GYRegisterURL;
+
+/** 获取住户信息URL */
+UIKIT_EXTERN NSString * const GYGetResidentsURL;
+
+/** 住户电子钥匙列表 */
+UIKIT_EXTERN NSString * const GYGetKeyListURL;
+
+/** 获取临时密码 */
+UIKIT_EXTERN NSString * const GYGetPasswordURL;
+
+/** 修改用户资料 */
+UIKIT_EXTERN NSString * const GYChangeInfoURL;
+
+/** 帮助与反馈 */
+UIKIT_EXTERN NSString * const GYFeedbackURL;
+
+/** 物业公告URL */
+UIKIT_EXTERN NSString * const GYNoticeURL;
+
+/** 发送验证码登录URL */
+UIKIT_EXTERN NSString * const GYSentCodeLoginURL;
+
+/** 验证验证码URL */
+UIKIT_EXTERN NSString * const GYCheckCodeURL;
+
+/** 验证码登录URL */
+UIKIT_EXTERN NSString * const GYCodeLoginURL;
+
+/** 获取小区列表URL */
+UIKIT_EXTERN NSString * const GYXQListURL;
+
+/** 申请门牌授权URL */
+UIKIT_EXTERN NSString * const GYApproveURL;
+
+/** 获取小区里面楼栋房号URL */
+UIKIT_EXTERN NSString * const GYGetHouseURL;
+
+/** 获取所有已授权小区的URL */
+UIKIT_EXTERN NSString * const GYGetXQURL;
+
+
+/** 获取小区中所有已授权设备URL */
+UIKIT_EXTERN NSString * const GYGetXQDevicesURL;
+
+/** 添加开门记录URL */
+UIKIT_EXTERN NSString * const GYAddOpenDoorRecordURL;
+
+/** 广告图URL */
+UIKIT_EXTERN NSString * const GYBannerURL;
+
+/** 测试获取已保存地址URL */
+UIKIT_EXTERN NSString * const GYTestDefaultAddressURL;
+
+/** 测试保存和修改订单地址URL */
+UIKIT_EXTERN NSString * const GYChangeAddressURL;
+
+/** 测试删除订单地址URL */
+UIKIT_EXTERN NSString * const GYDeleteAddressURL;
+
+/** 测试保存订单地址URL */
+UIKIT_EXTERN NSString * const GYSaveOrdersURL;
+
+/** 微信支付下单接口链接URL */
+UIKIT_EXTERN NSString * const GYWeChatPayURL;
+
+/** 测试下完订单URL */
+UIKIT_EXTERN NSString * const GYFinishOrderURL;
+
+/** 测试支付URL */
+UIKIT_EXTERN NSString * const GYPayURL;
+
+/** 测试查看订单列表URL */
+UIKIT_EXTERN NSString * const GYCheckOutOrdersURL;
+
+/** 测试家电清洗URL */
+UIKIT_EXTERN NSString * const GYApplianceWashURL;
+
+

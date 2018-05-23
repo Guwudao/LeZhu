@@ -1,0 +1,46 @@
+//
+//  PrefixHeader.pch
+//  LeZhu
+//
+//  Created by apple on 17/2/3.
+//  Copyright © 2017年 guanyue. All rights reserved.
+//
+
+#ifndef PrefixHeader_pch
+#define PrefixHeader_pch
+
+#ifdef __OBJC__
+
+/**********   头文件   **********/
+// Const
+#import "GlobeConst.h"
+
+// Category
+#import "UIView+frame.h"
+#import "UIImage+Image.h"
+
+// lib
+#import "SDImageCache.h"
+#import <UIImageView+WebCache.h>
+#import "SVProgressHUD.h"
+#import <MJExtension/MJExtension.h>
+#import "JWNetWorking.h"
+#import <AFNetworking.h>
+#import <MBProgressHUD.h>
+#import <DoorMasterSDK/DoorMasterSDK.h> // 门禁SDK
+#import "MBProgressHUD+MJ.h"
+#import <MJRefresh/MJRefresh.h>
+#import <PulsingHaloLayer.h> // 脉冲动画
+
+
+// Tool
+#import "JWAlert.h"
+
+
+// Macros
+#import "Macros.h"
+
+
+#endif /* PrefixHeader_pch */
+
+#endif

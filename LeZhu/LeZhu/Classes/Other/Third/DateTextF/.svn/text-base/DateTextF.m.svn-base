@@ -1,0 +1,69 @@
+//
+//  DateTextF.m
+//  04-自定义键盘
+//
+//  Created by xmg1 on 16/9/2.
+//  Copyright © 2016年 小码哥. All rights reserved.
+//
+
+#import "DateTextF.h"
+
+@implementation DateTextF
+
+//在同一个类中,把相同的代码写到同一个方法当中,高内聚
+//满足绑定类的形式
+- (void)awakeFromNib {
+    [super awakeFromNib];
+    [self setUp];
+    
+}
+//通过代码也要有UIPickerView
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        [self setUp];
+    }
+    return self;
+}
+
+
+
+- (void)setUp {
+    //修改键盘类型
+    UIDatePicker *pickV = [[UIDatePicker alloc] init];
+    //日期模式
+    pickV.datePickerMode = UIDatePickerModeDateAndTime;
+    
+    NSDate *date = [NSDate date];
+    NSDate *maxDate = [NSDate dateWithTimeIntervalSinceNow:3600.0*168];
+    NSDate *minDate = [date dateByAddingTimeInterval:3600.0*2];
+
+    pickV.minimumDate = minDate;
+    pickV.maximumDate = maxDate;
+    //修改地区
+    pickV.locale = [NSLocale localeWithLocaleIdentifier:@"zh"];
+    
+    [pickV addTarget:self action:@selector(dateChange:) forControlEvents:UIControlEventValueChanged];
+    
+    self.inputView = pickV;
+    
+}
+
+- (void)dateChange:(UIDatePicker *)pickV {
+    
+    //获取当前Datepick的日期
+    NSDate *date = pickV.date;
+    //把日期转成字符串
+    NSDateFormatter *fmt = [[NSDateFormatter alloc] init];
+    fmt.dateFormat = @"yyyy-MM-dd HH:mm";
+//    fmt.dateFormat = @"yyyy";
+    NSString *dateString = [fmt stringFromDate:date];
+    
+    //给当前文本框赋值
+    self.text = dateString;
+    
+}
+
+
+@end

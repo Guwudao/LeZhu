@@ -1,0 +1,58 @@
+//
+//  GYNavigationController.m
+//  LeZhu
+//
+//  Created by apple on 17/2/3.
+//  Copyright © 2017年 guanyue. All rights reserved.
+//
+
+#import "GYNavigationController.h"
+//#import "GYShareViewController.h"
+#define NavBarColor [UIColor colorWithRed:250/255.0 green:227/255.0 blue:111/255.0 alpha:1.0]
+
+@interface GYNavigationController ()
+
+@end
+
+@implementation GYNavigationController
+
++ (void)load{
+    // 修改导航条的背景颜色
+    UINavigationBar *navBar = [UINavigationBar appearance];
+    UIColor *bgColor = COLOR(245, 106, 77, 1);
+    
+    /** 设置背景颜色方案1: 但是会造成view向下偏离64点(因为translucent属性问题)  ****/
+    [navBar setBackgroundImage:[UIImage imageWithColor:bgColor size:CGSizeMake(1.0f, 1.0f)] forBarMetrics:UIBarMetricsDefault];
+    navBar.translucent = NO;
+    /** 设置背景颜色方案2  ********/
+//    [navBar setBarTintColor:bgColor];
+    
+    // 设置title字体
+    NSMutableDictionary *dicBar=[NSMutableDictionary dictionary];
+    dicBar[NSFontAttributeName]=[UIFont systemFontOfSize:17];
+    dicBar[NSForegroundColorAttributeName] = [UIColor whiteColor];
+    [navBar setTitleTextAttributes:dicBar];
+    
+    
+  
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+
+    self.automaticallyAdjustsScrollViewInsets = NO;
+    
+    self.edgesForExtendedLayout = UIRectEdgeTop;
+    
+    self.navigationBar.tintColor = [UIColor whiteColor];
+}
+
+
+
+-(UIStatusBarStyle)preferredStatusBarStyle{
+    return UIStatusBarStyleLightContent;
+}
+
+
+
+@end

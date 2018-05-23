@@ -1,0 +1,218 @@
+//
+//  DevModel.h
+//  DoorMasterSDK DevModel Object
+//  Created by Jason.Huang on 15/04/10.
+//  Copyright (c) 2016. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+#import "DMSDK_CallBack.h"
+
+@interface LibDevModel : NSObject
+
+// SDK内部使用，不需要设置
+// (EN: SDK internal use, do not need to set）
+@property (nonatomic, copy) NSString *identifier;
+
+// * 设备序列号 --必须
+// * (EN: Device Serial Number - Required）
+@property (nonatomic, copy) NSString *devSn;
+
+// * 设备序MAC --必须
+// * (EN: Device MAC - Required）
+@property (nonatomic, copy) NSString *devMac;
+
+// * 设备类型(1 门禁读头, 2 一体机, 3 梯控读头, 4 无线联网锁, 5 蓝牙小模块, 6 门禁控制器, 7 触摸开关门禁, 9 二维码设备 ) --必须
+// * (EN: Device type (1 access reader, 2-in-1, 3 ladder control reading head, 4 wireless networking lock, 5 Bluetooth small module, 6 access controller, 7 touch switch access control, 9 qrcode device) -- Required）
+@property (nonatomic) int devType;
+
+// 管理者权限： 1 超级管理员，2 管理员， 4 普通用户
+// (EN: Administrator privileges: 1 Super administrator, 2 administrators, 4 ordinary users)
+@property (nonatomic) int privilege;
+
+// 开门方式;
+// (EN: Open door type)
+@property (nonatomic) int openMode;
+
+// 验证方式： 1 有效期， 2 次数， 3 有效期+次数
+// (EN: Verification: 1 valid, 2 times, 3 valid + number of times)
+@property (nonatomic) int verified;
+
+// 开始日期，格式：年月日时分秒，如：20151201102030
+// (EN: Start date, format: year, month, day, hour and minute, such as: 20151201102030)
+@property (nonatomic, copy) NSString *startDate;
+
+// 冻结日期，格式：年月日时分秒，如：20151201102030
+// (EN: Freeze date, format: year, month, day, hour and minute, such as: 20151201102030)
+@property (nonatomic, copy) NSString *endDate;
+
+// 使用次数
+// (EN: Use count)
+@property (nonatomic) int useCount;
+
+// * 用户电子钥匙 --必须
+// * (EN: User Electronic Key - Required)
+@property (nonatomic, copy) NSString *eKey;
+
+// 用户卡号, 用于兼容 controlDevice、openDoor开门接口
+// (EN: User card number, for compatible controlDevice, openDoor open the door interface)
+@property (nonatomic, copy) NSString *cardno;
+
+
+/**
+ * zh-CN: 初始化蓝牙--预加载，首次调用需要时间（1秒内），在APP启动后调用最佳
+ * En: Initialize Bluetooth - preload, first call takes time (within 1 second), invokes the best after APP starts
+ */
++(int)initBluetooth;
+
+/**
+ * zh-CN: 初始化蓝牙--预加载，首次调用需要时间（1秒内），在APP启动后调用最佳 --> 手机蓝牙未打开时，不弹出提示框
+ * En: Initialize Bluetooth - preload, first call takes time (within 1 second), invokes the best after APP starts  --> Phone Bluetooth is not open, do not pop-up prompt box
+ */
++(int)initBluetoothNotShowPower;
+
+/**
+ * zh-CN: 初始化蓝牙回调函数
+ * En: Initializes the Bluetooth callback function
+ */
++(void) onInitBluetoothOver:(BlockInitBluetoothOver)blockInitBluetooth;
+
+/**
+ * zh-CN: 蓝牙状态改变立即返回
+ * En: Bluetooth status changes are returned immediately
+ *
+ * BlockBluetoothStateOver: typedef void (^BlockBluetoothStateOver)(int state)
+ * Return (int)state, state value defined：
+ *            CBCentralManagerStateUnknown = 0, // = 0
+ *            CBCentralManagerStateResetting,  // = 1
+ *            CBCentralManagerStateUnsupported, // = 2
+ *            CBCentralManagerStateUnauthorized, // = 3
+ *            CBCentralManagerStatePoweredOff, // = 4
+ *            CBCentralManagerStatePoweredOn, // = 5
+ */
++(void)onBluetoothStateOver:(BlockBluetoothStateOver)blockBluetoothState;
+
+/**
+ * zh-CN: 启动蓝牙后台模式，锁屏时照常可以开门
+ * EN: Start the Bluetooth background mode, lock the screen as usual can open the door
+ */
++(int)startBackgroundMode;
+
+/**
+ * zh-CN: 停止蓝牙后台模式
+ * EN: Stop Bluetooth background mode
+ */
++(int)stopBackgroundMode;
+
+/**
+ * zh-CN: 后台模式时，扫描结果回调函数. 用法：调用startBackgroundMode函数后，后台启用定时扫描，将扫描结果返回给onBGScanOver回调函数
+ * EN: Background mode, the scan results callback function Usage: call startBackgroundMode function, the background enabled regular scan, the scan results will be returned to the onBGScanOver callback function
+ *
+ * BlockOnScanOver: typedef void (^BlockOnScanOver)(NSMutableDictionary *devDict);
+ * Parameter devDict format：{devSn：Signal Strength}，E.g：{"123456": -70, "654321": -72}
+ */
++(void)onBGScanOver:(BlockOnScanOver)blockBGScan;
+
+/**
+ * zh-CN: SDK控制设备开门、设置参数等 接口
+ * EN: SDK control equipment to open the door, set the interface parameters
+ *
+ * @param devModel LibDevModel object
+ * @param operation：Operation instruction
+ */
++(int)controlDevice:(LibDevModel *)devModel andOperation:(int)operation;
+
+/**
+ * zh-CN: SDK控制设备开门扩展接口
+ * 注：用于用户电子钥匙等数据不存储进SDK中，如果存储数据，请使用controlDevice接口开门
+ *
+ * EN: SDK controls the device to open the door to expand the interface
+ * Note: For the user electronic keys and other data is not stored in the SDK, if the stored data, use the controlDevice interface to open the door
+ *
+ * @param devModel LibDevModel object
+ * @param devModel instruction
+ */
++(int)openDoor:(LibDevModel *)devModel;
+
+
+/**
+ * controlDevice Callback function
+ * BlockOnControlOver: typedef void (^BlockOnControlOver)(int ret, NSMutableDictionary *msgDict)
+ */
++(void)onControlOver:(BlockOnControlOver)blockControl;
+
+/**
+ * zh-CN: DK扫描附近设备
+ * @param scanTime：扫描时间 （数值1-60判断为秒，100以上判断为毫秒）
+ * @param scanOpenDoor：是否用于扫描开门 （YES 内部扫描三次取信号平均值返回， NO 只扫描一次返回）
+ *
+ * EN: The SDK scans for nearby devices
+ * @param scanTime：Scan time (the value 1-60 is judged as second and the value of 100 or more is judged as millisecond)
+ * @param scanOpenDoor Whether it is used to scan the door (YES internal scan three times to get the signal average return, NO only scan once to return)
+ */
++(int)scanDevice:(int)scanTime andScanOpen:(BOOL)scanOpenDoor;
+
+/**
+ * zh-CN: scanDevice 回调函数
+ * EN: scanDevice Callback function
+ *
+ * BlockOnScanOver: typedef void (^BlockOnScanOver)(NSMutableDictionary *devDict); 
+ * Parameter devDict format：{devSn：Signal Strength}，E.g：{"123456": -70, "654321": -72}
+ */
++(void)onScanOver:(BlockOnScanOver)blockScan;
+
+/**
+ * zh-CN: 同步设备时间
+ * @param devModel 操作的设备对象
+ * @param time：时间，格式：15110910042301, 含义：15年11月09日10点04分23秒-星期一
+ * 使用接口后，调用 onControlOver接口回调获取操作结果
+ *
+ * EN: Synchronize device time
+ * @param devModel LibDevModel object
+ * @param time Format: 15110910042301, meaning: November 9,2015 10:04:23 PM - Monday
+ * After using the interface, call the onControlOver interface callback to obtain the operation result
+ */
++(int)syncDeviceTime:(LibDevModel *)devModel andTime:(NSString *) time;
+
+/**
+ * zh-CN: 设置设备控制参数
+ * @param devModel 操作的设备对象
+ * @param wgfmt：韦根格式，26/34
+ * @param openTime：开门时长，默认5秒
+ * @param lockSwitch：锁开关信号设置， 0电锁控制，1手动开关（默认电锁控制）
+ * 使用接口后，调用 onControlOver接口回调获取操作结果
+ *
+ * EN: Set the device control parameters
+ * @param devModel LibDevModel object
+ * @param wgfmt Wiegand format, 26 or 34
+ * @param openTime Opening time, default 5 seconds
+ * @param lockSwitch: Lock switch signal setting, 0 electric lock control, 1 manual switch (default electric lock control)
+ * After using the interface, call the onControlOver interface callback to obtain the operation result
+ */
++(int)setDeviceParam:(LibDevModel *)devModel andWGFmt:(int)wgfmt andOpenTime:(int)openTime andLockSwitch:(int)lockSwitch;
+
+/**
+ * zh-CN: 修改设备管理(开门)密码
+ * @param devModel： 操作的设备对象
+ * @param oldPwd：旧密码，6位数字，没有旧密码，传入@""字符串即可
+ * @param newPwd：新密码，6位数字，例如：@"123456"
+ * 使用接口后，调用 onControlOver接口回调获取操作结果
+ *
+ * EN: Modify the device management (open door) password
+ * @param devModel: LibDevModel object
+ * @param oldPwd: Old password, 6 digits, without the old password, pass in the @"" string
+ * @param newPwd: New password, 6 digits, E.g: @"123456"
+ * After using the interface, call the onControlOver interface callback to obtain the operation result
+ */
++(int)modifyDevicePassword:(LibDevModel *)devModel andOldPwd:(NSString *)oldPwd andNewPwd:(NSString *)newPwd;
+
+/**
+ * zh-CN: 获取电子钥匙Identity和来源
+ * EN: Get eKey Indentity and resource
+ *
+ * @param eKey: The user eKey
+ * return: NSDictionary object：{"resIdentity": @"***", "resource": @"**"}
+ */
++(NSDictionary*)getEkeyIdentityAndResource:(NSString *)eKey;
+
+@end

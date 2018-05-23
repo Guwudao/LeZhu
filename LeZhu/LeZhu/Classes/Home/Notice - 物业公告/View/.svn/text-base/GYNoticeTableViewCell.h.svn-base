@@ -1,0 +1,16 @@
+//
+//  GYNoticeTableViewCell.h
+//  LeZhu
+//
+//  Created by apple on 17/2/27.
+//  Copyright © 2017年 guanyue. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface GYNoticeTableViewCell : UITableViewCell
+@property (weak, nonatomic) IBOutlet UILabel *titleL;
+@property (weak, nonatomic) IBOutlet UILabel *timeL;
+@property (weak, nonatomic) IBOutlet UILabel *detailL;
+
+@end

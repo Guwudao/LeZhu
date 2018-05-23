@@ -1,0 +1,164 @@
+//
+//  GYNoticeTableViewController.m
+//  LeZhu
+//
+//  Created by apple on 17/2/27.
+//  Copyright © 2017年 guanyue. All rights reserved.
+//
+
+#import "GYNoticeTableViewController.h"
+#import "GYNoticeTableViewCell.h"
+#import "GYNoticeModel.h"
+#import "GYDetailViewController.h"
+#import "GYNothingView.h"
+
+static NSString *const cellID = @"GYNoticeCell";
+
+@interface GYNoticeTableViewController ()
+
+@property(nonatomic, strong)NSMutableArray *noticeArr;
+
+@end
+
+@implementation GYNoticeTableViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+
+    // 注册cell
+    [self.tableView registerNib:[UINib nibWithNibName:@"GYNoticeTableViewCell" bundle:nil] forCellReuseIdentifier:cellID];
+    
+    // 初始化导航栏内容
+    [self initNavBarBtn];
+    
+    [SVProgressHUD showWithStatus:@"加载中"];
+
+    // 请求网络请求数据
+    [self networkRequired];
+    
+    [self setupRefresh];
+}
+
+-(void)viewWillDisappear:(BOOL)animated{
+    [SVProgressHUD dismiss];
+}
+
+- (void)setupRefresh{
+    MJRefreshNormalHeader *header1 = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(networkRequired)];
+    header1.stateLabel.font = [UIFont systemFontOfSize:14];
+    header1.lastUpdatedTimeLabel.hidden = YES;
+    header1.automaticallyChangeAlpha = YES;
+    self.tableView.mj_header = header1;
+}
+
+- (void)initNavBarBtn{
+    self.navigationItem.title = @"物业公告";
+    UIBarButtonItem *backbutton = [[UIBarButtonItem alloc]init];
+    backbutton.title = @"返回";
+    self.navigationItem.backBarButtonItem = backbutton;
+}
+
+- (void)networkRequired{
+    NSString *wuyeid = [[NSUserDefaults standardUserDefaults] objectForKey:@"wuyeid"];
+    JWNetWorking *mgr = [JWNetWorking sharedManager];
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"wyid"] = wuyeid;
+    parameters[@"status"] = @"1,2,3,4";
+    parameters[@"page"] = @"1";
+    parameters[@"pageSize"] = @"20";
+    [mgr getRequestWithUrl:GYNoticeURL parameter:parameters successBlock:^(id responseBody) {
+        
+        [self.tableView.mj_header endRefreshing];
+        NSArray *extraArr = responseBody[@"extra"];// 字典数组
+//        NSDictionary *dic = extraArr.firstObject;
+//        id detail = dic[@"detail"];
+//        NSLog(@"%@", [detail class]);
+        _noticeArr = [GYNoticeModel mj_objectArrayWithKeyValuesArray:extraArr];
+        if (!_noticeArr) {
+            [self showMsg:@"该小区暂时无公告"];
+            
+            GYNothingView *nothingV = [GYNothingView nothingView];
+            //            self.tableView.backgroundView = nothingV;
+            nothingV.frame = self.view.bounds;
+            [self.tableView addSubview:nothingV];
+            
+        }else{
+            [self.tableView reloadData];
+
+        }
+        
+        GYLog(@"%@", responseBody);
+        GYLog(@"%@", responseBody[@"msg"]);
+        [SVProgressHUD dismiss];
+    } failureBlock:^(NSString *error) {
+        
+        [SVProgressHUD dismiss];
+        [self showMsg:@"加载失败,请重试"];
+        GYNothingView *nothingV = [GYNothingView nothingView];
+        //            self.tableView.backgroundView = nothingV;
+        nothingV.frame = self.view.bounds;
+        nothingV.backgroundColor = [UIColor whiteColor];
+        [self.tableView addSubview:nothingV];
+        GYLog(@"%@", error);
+    }];
+    
+}
+
+#pragma mark - Table view data source
+
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+#warning Incomplete implementation, return the number of rows
+    return _noticeArr.count;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return 70;
+}
+
+// 设置cell内容
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    GYNoticeTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellID forIndexPath:indexPath];
+    GYNoticeModel *model = _noticeArr[indexPath.row];
+    cell.titleL.text = model.title;
+    cell.timeL.text = model.ctime;
+
+    return cell;
+}
+
+// cell点击
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    [tableView deselectRowAtIndexPath:indexPath animated:YES]; // 取消选中状态
+    
+    GYDetailViewController *vc = [[GYDetailViewController alloc] init];
+    GYNoticeModel *model = _noticeArr[indexPath.row];
+
+    vc.detailStr = model.detail;
+    vc.navigationItem.title = @"物业公告";
+    self.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:vc animated:YES];
+    self.hidesBottomBarWhenPushed = YES;
+    
+}
+
+// 设置分割线左边顶头
+- (void)viewDidLayoutSubviews{
+    [super viewDidLayoutSubviews];
+    if ([self.tableView respondsToSelector:@selector(setSeparatorInset:)]) {
+        [self.tableView setSeparatorInset:UIEdgeInsetsZero];
+    }
+    if ([self.tableView respondsToSelector:@selector(setLayoutMargins:)]) {
+        [self.tableView setLayoutMargins:UIEdgeInsetsZero];
+    }
+}
+
+- (void)showMsg:(NSString *)msg{
+    // 弹框提示
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"提示" message:msg preferredStyle:UIAlertControllerStyleAlert];
+    [self presentViewController:alertController animated:YES completion:nil];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [alertController dismissViewControllerAnimated:YES completion:nil];
+    });
+}
+@end

@@ -1,0 +1,82 @@
+//
+//  GYReceivedOrderVC.m
+//  LeZhu
+//
+//  Created by apple on 17/2/4.
+//  Copyright © 2017年 guanyue. All rights reserved.
+//
+
+#import "GYReceivedOrderVC.h"
+#import "GYPayCell.h"
+#import "YZDisplayViewHeader.h"
+
+
+static NSString *payCellID = @"fuckHer";
+
+@interface GYReceivedOrderVC ()<GYPayCellProtocol>
+
+@end
+
+@implementation GYReceivedOrderVC
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    self.view.backgroundColor = COLOR(239, 239, 244, 1);
+    
+    
+    [self.tableView registerNib:[UINib nibWithNibName:@"GYPayCell" bundle:nil] forCellReuseIdentifier:payCellID];
+    
+    [self loadNetworkData];
+
+}
+
+
+
+// 加载网络数据
+- (void)loadNetworkData{
+    GYLog(@"滚动结束, 加载数据22");
+    
+
+}
+
+
+
+#pragma mark - Table view data source
+
+
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return 150+10;
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+#warning Incomplete implementation, return the number of sections
+    return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+#warning Incomplete implementation, return the number of rows
+    return 4;
+}
+
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    GYPayCell *cell = [tableView dequeueReusableCellWithIdentifier:payCellID forIndexPath:indexPath];
+    cell.delegate = self;
+    cell.payStatusL.text = @"已接单";
+    [cell.payBtn setTitle:@"联系阿姨" forState:UIControlStateNormal];
+    return cell;
+}
+
+
+#pragma mark - GYPayCell delegate
+- (void)payBtnClick:(GYPayCell *)payCell{
+    GYLog(@"点击联系阿姨");
+}
+
+- (void)cancelOrderBtnClick:(GYPayCell *)payCell{
+    GYLog(@"点击取消订单");
+}
+
+
+@end

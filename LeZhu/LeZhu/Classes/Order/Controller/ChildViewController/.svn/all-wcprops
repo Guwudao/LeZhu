@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 146
+/svn/LifeService/!svn/ver/1209/trunk/Life_c_ios/LeZhu(%E9%97%A8%E7%A6%81+%E5%AE%B6%E6%94%BF)%20/LeZhu/Classes/Order/Controller/ChildViewController
+END
+GYPendingOrderVC.h
+K 25
+svn:wc:ra_dav:version-url
+V 165
+/svn/LifeService/!svn/ver/1078/trunk/Life_c_ios/LeZhu(%E9%97%A8%E7%A6%81+%E5%AE%B6%E6%94%BF)%20/LeZhu/Classes/Order/Controller/ChildViewController/GYPendingOrderVC.h
+END
+GYReceivedOrderVC.h
+K 25
+svn:wc:ra_dav:version-url
+V 166
+/svn/LifeService/!svn/ver/1078/trunk/Life_c_ios/LeZhu(%E9%97%A8%E7%A6%81+%E5%AE%B6%E6%94%BF)%20/LeZhu/Classes/Order/Controller/ChildViewController/GYReceivedOrderVC.h
+END
+GYPendingOrderVC.m
+K 25
+svn:wc:ra_dav:version-url
+V 165
+/svn/LifeService/!svn/ver/1078/trunk/Life_c_ios/LeZhu(%E9%97%A8%E7%A6%81+%E5%AE%B6%E6%94%BF)%20/LeZhu/Classes/Order/Controller/ChildViewController/GYPendingOrderVC.m
+END
+GYNotPayOrderVC.h
+K 25
+svn:wc:ra_dav:version-url
+V 164
+/svn/LifeService/!svn/ver/1078/trunk/Life_c_ios/LeZhu(%E9%97%A8%E7%A6%81+%E5%AE%B6%E6%94%BF)%20/LeZhu/Classes/Order/Controller/ChildViewController/GYNotPayOrderVC.h
+END
+GYReceivedOrderVC.m
+K 25
+svn:wc:ra_dav:version-url
+V 166
+/svn/LifeService/!svn/ver/1078/trunk/Life_c_ios/LeZhu(%E9%97%A8%E7%A6%81+%E5%AE%B6%E6%94%BF)%20/LeZhu/Classes/Order/Controller/ChildViewController/GYReceivedOrderVC.m
+END
+GYCompletedOrderVC.h
+K 25
+svn:wc:ra_dav:version-url
+V 167
+/svn/LifeService/!svn/ver/1078/trunk/Life_c_ios/LeZhu(%E9%97%A8%E7%A6%81+%E5%AE%B6%E6%94%BF)%20/LeZhu/Classes/Order/Controller/ChildViewController/GYCompletedOrderVC.h
+END
+GYNotPayOrderVC.m
+K 25
+svn:wc:ra_dav:version-url
+V 164
+/svn/LifeService/!svn/ver/1209/trunk/Life_c_ios/LeZhu(%E9%97%A8%E7%A6%81+%E5%AE%B6%E6%94%BF)%20/LeZhu/Classes/Order/Controller/ChildViewController/GYNotPayOrderVC.m
+END
+GYCompletedOrderVC.m
+K 25
+svn:wc:ra_dav:version-url
+V 167
+/svn/LifeService/!svn/ver/1078/trunk/Life_c_ios/LeZhu(%E9%97%A8%E7%A6%81+%E5%AE%B6%E6%94%BF)%20/LeZhu/Classes/Order/Controller/ChildViewController/GYCompletedOrderVC.m
+END

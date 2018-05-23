@@ -1,0 +1,637 @@
+//
+//  GYSettingViewController.m
+//  LeZhu
+//
+//  Created by apple on 17/3/2.
+//  Copyright © 2017年 guanyue. All rights reserved.
+//
+
+#import "GYSettingViewController.h"
+#import "GYDevModel.h"
+#import "GYChangeNameViewController.h"
+#import "GYChangePwdViewController.h"
+#import "JWDoorTool.h"
+#import <AudioToolbox/AudioToolbox.h>
+
+
+@interface GYSettingViewController ()<UINavigationControllerDelegate,UIImagePickerControllerDelegate>
+@property (weak, nonatomic) IBOutlet UISegmentedControl *distanceSegment;
+@property (weak, nonatomic) IBOutlet UIImageView *iconImg;
+
+@property (weak, nonatomic) IBOutlet UILabel *nameLabel;
+
+@property (weak, nonatomic) IBOutlet UISwitch *nearDoorOpenSwitch;
+
+@property (weak, nonatomic) IBOutlet UISwitch *shakeOpenSwitch;
+
+@property (nonatomic, strong) NSMutableDictionary *tempDevDict; // 扫描到的设备
+
+@property (nonatomic, strong) NSArray *devArr; // 已授权的设备模型数组
+
+@property (weak, nonatomic) IBOutlet UIButton *unLoginBtn;
+
+@property (nonatomic, strong)UIImage *scaledImg; // 压缩后的头像图片
+
+
+@end
+
+@implementation GYSettingViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    [self initSetting];
+    
+    // 设置允许摇一摇功能
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"shakeOpenSwitch"] isEqualToString:@"1"]) {
+        // 并让自己成为第一响应者
+        [UIApplication sharedApplication].applicationSupportsShakeToEdit = YES;
+        
+        [self becomeFirstResponder];
+        
+    }else{
+        [self resignFirstResponder];
+    }
+}
+
+- (void)initSetting{
+    self.navigationItem.title = @"设置";
+    
+    self.unLoginBtn.layer.cornerRadius = 5;
+    
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+    self.nameLabel.text = [def objectForKey:@"name"];
+    
+    if ([[def objectForKey:@"nearDoorSwitch"] isEqualToString:@"0"]) {
+        self.nearDoorOpenSwitch.on = NO;
+    }else if([[def objectForKey:@"nearDoorSwitch"] isEqualToString:@"1"]){
+        self.nearDoorOpenSwitch.on = YES;
+    }
+    
+    if ([[def objectForKey:@"shakeOpenSwitch"] isEqualToString:@"0"]) {
+        self.shakeOpenSwitch.on = NO;
+    }else if([[def objectForKey:@"shakeOpenSwitch"] isEqualToString:@"1"]){
+        self.shakeOpenSwitch.on = YES;
+    }
+    
+    
+    //  把头像设置成圆形
+    self.iconImg.layer.cornerRadius=self.iconImg.frame.size.width/2;
+    self.iconImg.layer.masksToBounds=YES;
+    //  给头像加一个圆形边框
+    self.iconImg.layer.borderWidth = 1.5f;
+    self.iconImg.layer.borderColor = [UIColor whiteColor].CGColor;
+//    self.iconImg.contentMode = UIViewContentModeScaleAspectFit;
+    
+    // 设置默认开门距离
+    if (self.distanceSegment.selectedSegmentIndex == 0) {
+        [def setObject:@"-60" forKey:@"rssi"];
+        GYLog(@"设置默认距离");
+    }
+    
+    NSString *indexStr = [[NSUserDefaults standardUserDefaults] objectForKey:@"segmentIndex"];
+    NSInteger Index = [indexStr integerValue];
+    self.distanceSegment.selectedSegmentIndex = Index;
+    
+}
+
+
+-(void)viewWillAppear:(BOOL)animated{
+    // 取昵称
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+    NSString *name = [def objectForKey:@"name"];
+    if (name) {
+        self.nameLabel.text = name;
+
+    }
+    
+    // 取头像
+    UIImage *img = [UIImage imageWithData:[def objectForKey:@"userIconData"]];
+    if (img) {
+        self.iconImg.image = img;
+
+    }
+}
+
+// 点击退出按钮
+- (IBAction)UnLoginBtnClick:(id)sender {
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:@"退出登录后您将不能使用开门功能" preferredStyle:UIAlertControllerStyleActionSheet];
+    UIAlertAction *ac1 = [UIAlertAction actionWithTitle:@"退出登录" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+        NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+        [def removeObjectForKey:@"uid"];
+        [def removeObjectForKey:@"phone"];
+        [def removeObjectForKey:@"name"];
+        [def removeObjectForKey:@"password"];
+        [def removeObjectForKey:@"myXQ"];
+        [def removeObjectForKey:@"myHouseName"];
+        [def removeObjectForKey:@"myBdName"];
+        [def removeObjectForKey:@"myDistrict"];
+        [def removeObjectForKey:@"userIconData"];
+        
+        
+        [self.navigationController popViewControllerAnimated:YES];
+
+    }];
+    UIAlertAction *ac2 = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+    [alert addAction:ac1];
+    [alert addAction:ac2];
+    [self presentViewController:alert animated:YES completion:nil];
+    
+    
+
+}
+
+
+
+// 设置分割线左边顶头
+- (void)viewDidLayoutSubviews{
+    [super viewDidLayoutSubviews];
+    if ([self.tableView respondsToSelector:@selector(setSeparatorInset:)]) {
+        [self.tableView setSeparatorInset:UIEdgeInsetsZero];
+    }
+    if ([self.tableView respondsToSelector:@selector(setLayoutMargins:)]) {
+        [self.tableView setLayoutMargins:UIEdgeInsetsZero];
+    }
+}
+
+// 摇一摇开始方法
+-(void)motionBegan:(UIEventSubtype)motion withEvent:(UIEvent *)event{
+    
+   
+    
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"shakeOpenSwitch"] isEqualToString:@"1"]){
+        // 添加动画
+        PulsingHaloLayer*halo = [PulsingHaloLayer layer];
+        halo.position = CGPointMake(screenW/2, screenH - 25);
+        [self.view.layer addSublayer:halo];
+        halo.haloLayerNumber = 3 ;
+        halo.radius = 500 ;
+        halo.backgroundColor = [COLOR(243, 84, 62, 0.7) CGColor];
+        halo.animationDuration = 2.5;
+        [halo start];
+        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+        // 取出Userdefault里面的电话
+        NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+        NSString *phone = [def valueForKey:@"phone"];
+        // 如果有保存到账号
+        if (phone.length != 0) {
+            JWNetWorking *mgr = [JWNetWorking sharedManager];
+            NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+            parameters[@"mobile"] = phone;
+            [mgr getRequestWithUrl:GYGetKeyListURL parameter:parameters successBlock:^(id responseBody) {
+                // 解析数据
+                NSDictionary *dic = responseBody[@"extra"];
+                NSArray *arr = dic[@"ResidentsKeyList"];
+                _devArr = [GYDevModel mj_objectArrayWithKeyValuesArray:arr];
+                
+                // *************** 开门 *****************
+                [JWDoorTool openDoorWithTarget:self andValidDeviceArr:_devArr andHaloLayer:halo tabBarVC:nil];
+                
+            } failureBlock:^(NSString *error) {
+                [halo removeFromSuperlayer];
+                [JWAlert showMsg:@"网络堵塞,请重试" WithOwner:self];
+            }];
+        }else{
+            [halo removeFromSuperlayer];
+
+            [JWAlert showMsg:@"请先登录.." WithOwner:self];
+        }
+        
+    }
+    
+    return;
+}
+
+
+// 靠近开门按钮
+- (IBAction)nearDoorOpenSwitchClick:(id)sender {
+    
+    if (self.nearDoorOpenSwitch.on == YES) {
+        // 靠近开门使用蓝牙后台模式，苹果官方审核较严格，需要给用户一些提醒是否开启
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:@"打开靠近开门功能，将会一直占用手机蓝牙，并增加一些耗电量. 您确认要打开吗?" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *action1 = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+            self.nearDoorOpenSwitch.on = NO;
+        }];
+        UIAlertAction *action2 = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+//            if (self.nearDoorOpenSwitch.on == YES) {
+                NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+                [def setObject:@"1" forKey:@"nearDoorSwitch"];
+                
+//            }else{
+
+//            }
+            
+            if (self.nearDoorOpenSwitch.on == YES){
+                
+                
+                
+                // Start near open function ---> Bluebooth background mode
+                [LibDevModel startBackgroundMode]; // 调用SDK开启蓝牙后台模式，即使用靠近开门功能
+                
+                
+                [self showMsg:@"已打开靠近开门模式"];  // 已打开靠近开门模式。注意：打开靠近开门功能，将会一直占用手机蓝牙，并增加一些耗电量.
+                
+                // 设置靠近开门回调函数，scanDevDict格式：{设备序列号：信号值}， 例如: {"123456": -70, "654321": -72}
+                // Set close to the open callback function, scanDevDict format: {device serial number: signal value}, E.g: {"123456": -70, "654321": -72}
+                [LibDevModel onBGScanOver:^(NSMutableDictionary *scanDevDict) {
+                    if ([scanDevDict count] == 0)
+                    {
+                        return;
+                    }
+                    
+                    // Identify the device with the strongest signal value, and the signal value is negative
+                    [self openNearDeviceByScan:scanDevDict]; // 找出信号值最强的设备，信号值为负数
+                }];
+            }
+            else
+            {
+
+            }
+        }];
+        [alert addAction:action1];
+        [alert addAction:action2];
+        [self presentViewController:alert animated:YES completion:nil];
+    }else{
+        
+        [LibDevModel stopBackgroundMode];
+        [self showMsg:@"已关闭靠近开门模式"]; // 已关闭靠近开门模式
+        
+        NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+        [def setObject:@"0" forKey:@"nearDoorSwitch"];
+    }
+    
+    
+    
+
+
+
+}
+
+// Open the near device
+-(void)openNearDeviceByScan:(NSMutableDictionary *)scanDevDict
+{
+    
+    // Get the open device sn
+    
+    NSArray *rssiArray = [scanDevDict allValues];
+    // Signal values are sorted in ascending order. Example: [-85, -73, -65]
+    NSArray *rssiSortedArray= [rssiArray sortedArrayUsingSelector:@selector(compare:)]; // 信号值升序排序，示例:[-85, -73, -65]
+    GYLog(@"附近的设备有 %@", rssiSortedArray);
+    
+    //取出信号最强的已授权的设备序列号
+    //    NSString *devSn = [self getOpenDevSn:rssiSortedArray andScanDict:scanDevDict];
+    //    GYLog(@"判断开门时devArr的值为%@", _devArr);
+    GYDevModel *myDevModel = [self getOpenModelWithScanDic:scanDevDict andSortedValueArray:rssiSortedArray andMyDevArray:_devArr];
+    
+    
+    if (myDevModel != nil)
+    {
+        // Use SDK Open door
+        MBProgressHUD *hud = [MBProgressHUD showMessage:@"正在尝试开门...."];
+        LibDevModel *devModel = [[LibDevModel alloc] init];
+//        NSString *myDevSn = [NSString stringWithFormat:@"%ld", myDevModel.devsn];
+        NSString *myDevSn = myDevModel.devsn;
+        
+        devModel.devSn = myDevSn;
+        devModel.devMac = myDevModel.devmac;
+        devModel.eKey = myDevModel.ekey;
+        devModel.devType = (short)myDevModel.devtype;
+        
+        NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+        NSString *nearSwitch = [def objectForKey:@"nearDoorSwitch"];
+        
+        
+        
+        
+        if ([nearSwitch isEqualToString:@"1"]) {
+            int ret = [LibDevModel controlDevice:devModel andOperation:0x00];  // E.g 1：Use controlDevice interface
+            if (ret != 0)
+            {
+                [hud hide:YES afterDelay:0];
+                GYLog(@"%d", ret);
+                [self showMsg:[NSString stringWithFormat:@"开门失败"]];
+                return;
+            }
+        }else{
+            [hud hideAnimated:YES];
+            [LibDevModel stopBackgroundMode];
+
+        }
+        
+        
+        
+        
+                //    int ret = [LibDevModel openDoor:self.tempDevDict[devSn]]; // E.g 2：Use openDoor interface
+        
+        // 接收开门结果--回调函数
+        // Receive the open result - the callback function
+        [LibDevModel onControlOver:^(int ret, NSMutableDictionary *msgDict) {
+            [hud hide:YES afterDelay:0];
+            //            [self showMsg:[NSString stringWithFormat:@"Device：%@ Open Success", devSn]];
+            [self onCommOver:ret andMsgDict:msgDict];
+        }];
+    }
+    else
+    {
+        [self showMsg:@"附近没有已授权的设备"];
+        return;
+    }
+}
+
+
+
+// 扫描回来的设备, 取出权限内信号最强的设备模型
+- (GYDevModel *)getOpenModelWithScanDic:(NSDictionary *)scanDict andSortedValueArray:(NSArray *)rssiSortedArray andMyDevArray:(NSArray *)devArr{
+    
+    
+    // 取出Userdefault里面的电话
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+    NSString *phone = [def valueForKey:@"phone"];
+    JWNetWorking *mgr = [JWNetWorking sharedManager];
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"mobile"] = phone;
+    [mgr getRequestWithUrl:GYGetKeyListURL parameter:parameters successBlock:^(id responseBody) {
+        
+        // 解析数据
+        NSDictionary *dic = responseBody[@"extra"];
+        NSArray *arr = dic[@"ResidentsKeyList"];
+        _devArr = [GYDevModel mj_objectArrayWithKeyValuesArray:arr];
+        
+        
+    } failureBlock:^(NSString *error) {
+        NSLog(@"%@", error);
+    }];
+    // 1.遍历排好序的信号数组, 从大到小取出每个信号
+    long maxIndex = rssiSortedArray.count - 1;
+    for (long i = maxIndex; i >= 0; i--) {
+        // 从大到小拿到每个信号
+        NSLog(@"%ld", maxIndex);
+        NSLog(@"sortarray 元素类型 %@",[rssiSortedArray[i] class]);
+        NSLog(@"sortarray %@", rssiSortedArray);
+        NSNumber *signal =rssiSortedArray[i];
+        NSLog(@"%@", signal);
+        // 2.根据信号值取字典中的key(devSn)
+        NSArray *arr=[scanDict allKeys];
+        GYLog(@"all keys arr数组的元素类型 %@", [arr.firstObject class]);
+        for (NSString *key in arr)
+        {
+            NSString *signalStr = [NSString stringWithFormat:@"%@", signal];
+            NSNumber *value = [scanDict objectForKey:key];
+            NSString *valueStr = [NSString stringWithFormat:@"%@", value];
+            NSLog(@"value为%@", valueStr);
+            NSLog(@"signalStr为%@", signalStr);
+            if (valueStr == signalStr)
+            {
+                // 3.拿到了对应的key
+                // 4.遍历模型数组, 拿devSn进行对比
+                for (GYDevModel *devModel in _devArr) {
+//                    NSString *devSn = [NSString stringWithFormat:@"%ld", (long)devModel.devsn];
+                    NSString *devSn = devModel.devsn;
+                    if ([devSn isEqualToString:key]) {
+                        NSLog(@"最后对比时devsn是%@, key是%@", devSn, key);
+                        
+                        // 拿这个设备的信号来判断,信号在所选范围内的话就返回,否则不返回
+                        NSNumber *rssiNum = scanDict[devSn];
+                        int rssi = [rssiNum intValue];
+                        
+                        NSNumber *chosenNum = [[NSUserDefaults standardUserDefaults] objectForKey:@"rssi"];
+                        int chosenRssi = [chosenNum intValue];
+                        
+                        if (rssi >= chosenRssi) {
+                            return devModel;
+
+                        }else{
+                            return  nil;
+                        }
+                        
+                    }
+                }
+            }
+            
+        }
+    }
+    return nil;
+}
+
+
+// controlDevice interface callback function
+-(void) onCommOver:(int)ret andMsgDict:(NSMutableDictionary *)msgDict
+{
+    if (ret == 0)
+    {
+        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+        [self showMsg:@"开门成功"];
+        [self addOpenDoorRecordWithStatus:@"1"];
+    }
+    else
+    {
+        [self showMsg:@"开门失败"];
+        [self addOpenDoorRecordWithStatus:@"0"];
+
+    }
+}
+
+
+// 摇一摇开关
+- (IBAction)shakeOpenSwitchClick:(id)sender {
+    self.shakeOpenSwitch.on = !self.shakeOpenSwitch.on;
+    
+    
+
+    if (self.shakeOpenSwitch.on == YES) {
+        NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+        [def setObject:@"1" forKey:@"shakeOpenSwitch"];
+    }else{
+        NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+        [def setObject:@"0" forKey:@"shakeOpenSwitch"];
+    }
+    
+}
+
+#pragma mark - Table view data source
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    if (indexPath.row == 1) {
+        UIStoryboard *stb = [UIStoryboard storyboardWithName:@"GYChangeNameViewController" bundle:nil];
+        GYChangeNameViewController *nameVC = [stb instantiateInitialViewController];
+        self.hidesBottomBarWhenPushed = YES;
+        [self.navigationController pushViewController:nameVC animated:YES];
+//        self.hidesBottomBarWhenPushed = NO;
+    }else if(indexPath.row ==  2){
+        UIStoryboard *stb = [UIStoryboard storyboardWithName:@"GYChangePwdViewController" bundle:nil];
+        GYChangePwdViewController *pwdVC = [stb instantiateInitialViewController];
+        self.hidesBottomBarWhenPushed = YES;
+        [self.navigationController pushViewController:pwdVC animated:YES];
+//        self.hidesBottomBarWhenPushed = NO;
+    }else if (indexPath.row == 0){
+        // 弹出提示
+        [self alertHeadIcon];
+    }
+    
+}
+
+//  方法：alterHeadPortrait
+-(void)alertHeadIcon{
+    /**
+     *  弹出提示框
+     */
+    //初始化提示框
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    //按钮：从相册选择，类型：UIAlertActionStyleDefault
+    [alert addAction:[UIAlertAction actionWithTitle:@"从相册选择" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        //初始化UIImagePickerController
+        UIImagePickerController *PickerImage = [[UIImagePickerController alloc]init];
+        
+        PickerImage.view.backgroundColor = [UIColor whiteColor];
+        
+        PickerImage.navigationBar.tintColor = [UIColor whiteColor];
+        
+        //获取方式1：通过相册（呈现全部相册），UIImagePickerControllerSourceTypePhotoLibrary
+        //获取方式2，通过相机，UIImagePickerControllerSourceTypeCamera
+        //获取方方式3，通过相册（呈现全部图片），UIImagePickerControllerSourceTypeSavedPhotosAlbum
+        PickerImage.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;//方式1
+        //允许编辑，即放大裁剪
+        PickerImage.allowsEditing = YES;
+        //自代理
+        PickerImage.delegate = self;
+       
+       
+        //页面跳转
+        [self presentViewController:PickerImage animated:YES completion:nil];
+        
+    }]];
+        
+       
+    //按钮：拍照，类型：UIAlertActionStyleDefault
+//    [alert addAction:[UIAlertAction actionWithTitle:@"拍照" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+//        
+//        
+//    }]];
+    //按钮：取消，类型：UIAlertActionStyleCancel
+    [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+// PickerImage完成后的代理方法
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info{
+    //定义一个newPhoto，用来存放我们选择的图片。
+    UIImage *newPhoto = [info objectForKey:@"UIImagePickerControllerEditedImage"];
+    //压缩图片
+    UIImage *scaledImg = [self imageWithImageSimple:newPhoto scaledToSize:CGSizeMake(70, 70)];
+    _scaledImg = scaledImg;
+    
+    //把图片转成base64
+    NSData *imgData = UIImageJPEGRepresentation(scaledImg, 0.7f);
+    NSString *encodedImgStr = [imgData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+    
+    // 加载中提示
+    [SVProgressHUD showWithStatus:@"提交中"];
+    
+    //上传图片到服务器
+    [self uploadPhotoWithEncodedImgStr:encodedImgStr];
+    
+    //关闭当前界面，即回到主界面去
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+
+
+- (void)uploadPhotoWithEncodedImgStr:(NSString *)str{
+    JWNetWorking *mgr = [JWNetWorking sharedManager];
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"uid"] = [[NSUserDefaults standardUserDefaults] objectForKey:@"uid"];
+    parameters[@"avatar"] = str;
+    [mgr getRequestWithUrl:GYChangeInfoURL parameter:parameters successBlock:^(id responseBody) {
+        
+        // 修改头像
+        self.iconImg.image = _scaledImg;
+        
+        // 本地缓存图片
+        NSData *imgData = UIImageJPEGRepresentation(_scaledImg, 1.0f);
+        [[NSUserDefaults standardUserDefaults] setObject:imgData forKey:@"userIconData"];
+        
+        [SVProgressHUD dismiss];
+        
+    } failureBlock:^(NSString *error) {
+        
+        [SVProgressHUD dismiss];
+        
+        [self showMsg:@"上传失败,请重试"];
+    }];
+
+    
+}
+
+
+
+//  压缩图片
+- (UIImage*)imageWithImageSimple:(UIImage*)image scaledToSize:(CGSize)newSize
+{
+    // Create a graphics image context
+    UIGraphicsBeginImageContext(newSize);
+    // Tell the old image to draw in this new context, with the desired
+    // new size
+    [image drawInRect:CGRectMake(0,0,newSize.width,newSize.height)];
+    // Get the new image from the context
+    UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
+    // End the context
+    UIGraphicsEndImageContext();
+    // Return the new image.
+    return newImage;
+}
+
+
+- (void) showMsg:(NSString *) msg
+{
+    // 弹框提示
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"提示" message:msg preferredStyle:UIAlertControllerStyleAlert];
+    [self presentViewController:alertController animated:YES completion:nil];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [alertController dismissViewControllerAnimated:YES completion:nil];
+    });
+    
+}
+- (IBAction)distanceSegmentClick:(UISegmentedControl *)sender {
+    
+    NSInteger Index = sender.selectedSegmentIndex;
+    NSString *indexStr = [NSString stringWithFormat:@"%ld", Index];
+    [[NSUserDefaults standardUserDefaults] setObject:indexStr forKey:@"segmentIndex"];
+    
+    switch (Index)
+    {
+        case 0:
+            GYLog(@"近距离");
+            [[NSUserDefaults standardUserDefaults] setObject:@"-60" forKey:@"rssi"];
+            break;
+        case 1:
+            GYLog(@"中距离");
+            [[NSUserDefaults standardUserDefaults] setObject:@"-70 " forKey:@"rssi"];
+
+            break;
+        case 2:
+            GYLog(@"远距离");
+            [[NSUserDefaults standardUserDefaults] setObject:@"-85" forKey:@"rssi"];
+
+            break;
+        default:
+            break;
+    }
+}
+
+/** 添加开门记录 */
+- (void)addOpenDoorRecordWithStatus:(NSString *)status{
+    JWNetWorking *mgr = [JWNetWorking sharedManager];
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"od.reid"] = [[NSUserDefaults standardUserDefaults] objectForKey:@"uid"];
+    parameters[@"od.account"] = [[NSUserDefaults standardUserDefaults] objectForKey:@"phone"];
+    parameters[@"od.type"] = @"1";
+    parameters[@"od.status"] = @"1";
+    [mgr getRequestWithUrl:GYAddOpenDoorRecordURL parameter:parameters successBlock:^(id responseBody) {
+        GYLog(@"添加开门记录结果%@", responseBody);
+        
+    } failureBlock:^(NSString *error) {
+        GYLog(@"添加开门记录失败, 网络堵塞");
+    }];
+}
+@end
