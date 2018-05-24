@@ -78,11 +78,7 @@ static NSString * HeaderID = @"headerID";
 
 @property (nonatomic, strong)UIImageView *holderV;
 
-//@property(nonatomic,strong) ServiceAddressModel *model;  // 服务地址模型
-
 @property(nonatomic,strong) NSString *serviceAddress;  // 服务地址
-
-//@property(nonatomic,strong) UIScrollView *scrollV;
 
 @property(nonatomic,strong) UIView *rightView;
 
@@ -191,7 +187,6 @@ static NSString * HeaderID = @"headerID";
 
 //发送网络请求判断是否已登录
 -(void)sendNetWork{
-//    http://192.168.0.117:8080/LifeService/serveType/mobile/appGetServiceType.do
     
     NSString *phone = [[NSUserDefaults standardUserDefaults] objectForKey:@"phone"];
     GYLog(@">>>>>>>>>>>>>>%@",phone);
@@ -367,7 +362,6 @@ static NSString * HeaderID = @"headerID";
             [self leftButtonClick];
         }
     
-    
 }
 
 //点击左边订单按钮
@@ -413,7 +407,6 @@ static NSString * HeaderID = @"headerID";
 }
 
 -(void)middleButtonClick{
-    GYLog(@"======================");
     
     PulsingHaloLayer*halo = [PulsingHaloLayer layer];
     halo.position = CGPointMake(screenW/2, screenH - 25);
@@ -441,10 +434,7 @@ static NSString * HeaderID = @"headerID";
             GYLog(@"转化模型后的ekey为%@", model1.ekey);
             
             // ***************** 开门 ********************
-//            [JWDoorTool openDoorWithTarget:self andValidDeviceArr:_devArr andHaloLayer:halo tabBarVC:self];
-            
         [JWDoorTool openDoorWithTarget:self andValidDeviceArr:_devArr andHaloLayer:halo homeVC:self];
-            
             
         } failureBlock:^(NSString *error) {
             GYLog(@"%@", error);
@@ -468,8 +458,7 @@ static NSString * HeaderID = @"headerID";
 //加载网页
 -(void)addWebView{
     
-    
-    // 获取 iOS 默认的 UserAgent，可以很巧妙地创建一个空的UIWebView来获取：
+    // 获取 iOS 默认的 UserAgent，可以创建一个空的UIWebView来获取：
     NSString *userAgent = [[[UIWebView alloc] init] stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
     // 获取App名称，我的App有本地化支持，所以是如下的写法
     NSString *appName = NSLocalizedStringFromTable(@"lezhuapp_ios", @"InfoPlist", nil);
@@ -491,15 +480,6 @@ static NSString * HeaderID = @"headerID";
     webView.delegate = self;
     
     self.webView = webView;
-    
-#warning ****************************修改访问路径**************************
-    
-    //    192.168.1.200:8080/LifeService
-    //    http://192.168.0.117:8080/LifeService/serveType/mobile/findAllByWetchat.do
-    //    http://lezhuapp.com/serveType/mobile/findAllByWetchat.do
-    //    http://192.168.1.200:8080/LifeService/public/getSystemDate.do
-    //    192.168.0.117:8080/LifeService/serveType/mobile/findAllByWetchat.do
-    
     
     NSURL *url = [NSURL URLWithString:@"http://lezhuapp.com/serveType/mobile/findAllByWetchat.do"];
     
@@ -709,11 +689,7 @@ static NSString * HeaderID = @"headerID";
 -(void)rightBtnClick{
     GYLog(@"点击了右边按钮");
     [self.webView goBack];
-    
-//    首先创建JSContext 对象（此处通过当前webView的键获取到jscontext）
-//    JSContext *context = [self.webView valueForKeyPath:@"documentView.webView.mainFrame.javaScriptContext"];
-//    NSString *textJS = @"showAlert('这里是JS中alert弹出的message')";
-//    [context evaluateScript:textJS];
+ 
 }
 
 -(void)leftBtnClick{
@@ -722,20 +698,6 @@ static NSString * HeaderID = @"headerID";
     NSString *phone = [def objectForKey:@"phone"];
     
     if (phone.length == 0 || phone == nil) {
-//        LXAlertView *alertV = [[LXAlertView alloc] initWithTitle:@"登录确认" message:@"你尚未登录\n如没有账号, 请先注册" cancelBtnTitle:@"登录" otherBtnTitle:@"注册" clickIndexBlock:^(NSInteger clickIndex) {
-//            NSLog(@"%ld", clickIndex);
-//            if (clickIndex == 0) {
-//                //进入登录界面
-//                [self presentLoginVC];
-//                
-//            }else{
-//                
-//                //进入注册页面
-//                [self presentRegisterVC];
-//            }
-//        }];
-//        alertV.animationStyle = LXASAnimationTopShake;
-//        [alertV showLXAlertView];
         
         [self rightButtonClick];
     }else{
