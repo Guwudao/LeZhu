@@ -35,7 +35,7 @@
     [self configUSharePlatforms];
     
     // 初始化蓝牙
-    [LibDevModel initBluetooth];
+//    [LibDevModel initBluetooth];
 
 
     //创建窗口并显示
@@ -156,26 +156,29 @@
 #pragma mark - private func
 - (void)chooseRootController{
     
-    NSDictionary *dict = [NSBundle mainBundle].infoDictionary;
-    NSString *curVersion = dict[@"CFBundleShortVersionString"];
-    NSString *lastVersion = [[NSUserDefaults standardUserDefaults] objectForKey:@"versionKey"];
+//    NSDictionary *dict = [NSBundle mainBundle].infoDictionary;
+//    NSString *curVersion = dict[@"CFBundleShortVersionString"];
+//    NSString *lastVersion = [[NSUserDefaults standardUserDefaults] objectForKey:@"versionKey"];
     
-    if ([curVersion isEqualToString:lastVersion]) {
-        //创建tabBar控制器
-        GYTabBarViewController *tabVC = [[GYTabBarViewController alloc] init];
-
-        self.window.rootViewController = tabVC;
-        
-    } else {
-        if (curVersion) {
-            [[NSUserDefaults standardUserDefaults] setObject:curVersion forKey:@"versionKey"];
-            [[NSUserDefaults standardUserDefaults] synchronize];
-        }
-        self.window.rootViewController = [[GYNewFeatureViewController alloc] init];
-        NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
-        [def setObject:@"1" forKey:@"shakeOpenSwitch"];
-
-    }
+//    if ([curVersion isEqualToString:lastVersion]) {
+//        //创建tabBar控制器
+//        GYTabBarViewController *tabVC = [[GYTabBarViewController alloc] init];
+//        self.window.rootViewController = tabVC;
+//
+//    } else {
+//        if (curVersion) {
+//            [[NSUserDefaults standardUserDefaults] setObject:curVersion forKey:@"versionKey"];
+//            [[NSUserDefaults standardUserDefaults] synchronize];
+//        }
+//        self.window.rootViewController = [[GYNewFeatureViewController alloc] init];
+//        NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+//        [def setObject:@"1" forKey:@"shakeOpenSwitch"];
+//
+//    }
+    
+    //创建tabBar控制器
+    GYTabBarViewController *tabVC = [[GYTabBarViewController alloc] init];
+    self.window.rootViewController = tabVC;
 }
 
 @end

@@ -9,7 +9,6 @@
 #import "GYNewFeatureViewController.h"
 #import "GYNewFeatureCell.h"
 
-
 static NSString * const reuseIdentifier = @"Cell";
 
 #define GYItemCount 3
@@ -23,6 +22,7 @@ static NSString * const reuseIdentifier = @"Cell";
 - (UIStatusBarStyle)preferredStatusBarStyle{
     return UIStatusBarStyleLightContent;
 }
+
 - (instancetype)init{
     UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
     flowLayout.itemSize = CGSizeMake([UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
@@ -30,6 +30,7 @@ static NSString * const reuseIdentifier = @"Cell";
     flowLayout.minimumLineSpacing = 0;
     return [super initWithCollectionViewLayout:flowLayout];
 }
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     

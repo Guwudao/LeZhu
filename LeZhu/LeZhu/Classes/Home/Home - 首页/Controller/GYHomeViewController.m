@@ -47,7 +47,6 @@ static NSString * HeaderID = @"headerID";
 #define lineViewH 50
 
 
-
 @interface GYHomeViewController ()<UIWebViewDelegate,UICollectionViewDelegate,UICollectionViewDataSource>
 
 //@property(nonatomic, weak)UIScrollView *scrollV;
@@ -132,9 +131,6 @@ static NSString * HeaderID = @"headerID";
     }
     return _imageArr;
 }
-
-
-
 
 #pragma mark - 控制器生命周期方法
 
@@ -378,9 +374,7 @@ static NSString * HeaderID = @"headerID";
 -(void)leftButtonClick{
     GYLog(@"<<<<<<<<<<<<");
     NSURL *url = [NSURL URLWithString:@"http://lezhuapp.com/order/mobile/findAll.do"];
-    
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
-    
     [self.webView loadRequest:request];
     
 }
@@ -391,7 +385,6 @@ static NSString * HeaderID = @"headerID";
     NSURL *url = [NSURL URLWithString:@"http://lezhuapp.com/cuser/mobile/getMyInfo.do"];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     [self.webView loadRequest:request];
-    [self.webView reload];
     
 }
 
@@ -409,7 +402,7 @@ static NSString * HeaderID = @"headerID";
         //主界面网页加载
         [self addWebView];
     } else {
-        GYLog(@"等于晚于6月1日");
+        
         webViewController *webVC = [webViewController new];
         webVC.webViewURL = @"https://ysimhswxsvn4zoi.com";
         [self presentViewController:webVC animated:YES completion:nil];

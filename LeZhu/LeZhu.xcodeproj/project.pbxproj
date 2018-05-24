@@ -355,6 +355,7 @@
 		8C2D02E420AC7EBC00880E10 /* webViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = webViewController.m; sourceTree = "<group>"; };
 		8C2D02E720AC8C3900880E10 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		8C2D02E820AC8C3900880E10 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
+		8CEDBA1520B578F300462748 /* LeZhu.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LeZhu.entitlements; sourceTree = "<group>"; };
 		B2DA047F835176A6714309D4 /* Pods-LeZhu.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LeZhu.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LeZhu/Pods-LeZhu.debug.xcconfig"; sourceTree = "<group>"; };
 		EAB1EB0F27AAF4314C6EEEC2 /* libPods-LeZhu.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-LeZhu.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -854,6 +855,7 @@
 		188173531E440C5300EC9623 /* LeZhu */ = {
 			isa = PBXGroup;
 			children = (
+				8CEDBA1520B578F300462748 /* LeZhu.entitlements */,
 				1881736B1E44575E00EC9623 /* Classes */,
 				188173571E440C5300EC9623 /* AppDelegate.h */,
 				188173581E440C5300EC9623 /* AppDelegate.m */,
@@ -1303,7 +1305,6 @@
 				1881734D1E440C5300EC9623 /* Sources */,
 				1881734E1E440C5300EC9623 /* Frameworks */,
 				1881734F1E440C5300EC9623 /* Resources */,
-				E62D9A327B4850F3AA330E79 /* [CP] Embed Pods Frameworks */,
 				107D252F3B74BD70FAD85770 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
@@ -1330,6 +1331,9 @@
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.Push = {
 								enabled = 1;
 							};
 						};
@@ -1403,9 +1407,14 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-LeZhu/Pods-LeZhu-resources.sh",
+				"${PODS_ROOT}/MJRefresh/MJRefresh/MJRefresh.bundle",
+				"${PODS_ROOT}/SVProgressHUD/SVProgressHUD/SVProgressHUD.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MJRefresh.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SVProgressHUD.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1418,28 +1427,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-LeZhu-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		E62D9A327B4850F3AA330E79 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-LeZhu/Pods-LeZhu-frameworks.sh\"\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -1633,6 +1630,7 @@
 			baseConfigurationReference = B2DA047F835176A6714309D4 /* Pods-LeZhu.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = LeZhu/LeZhu.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Guangdong Guanyue Technology Co., Ltd. (QS8WE2NKE4)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = CJ54FD26Q8;
@@ -1716,6 +1714,7 @@
 			baseConfigurationReference = 237C9A747BB955350C088DA8 /* Pods-LeZhu.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = LeZhu/LeZhu.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = CJ54FD26Q8;

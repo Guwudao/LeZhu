@@ -14,6 +14,9 @@ PODS:
   - AFNetworking/Serialization (3.1.0)
   - AFNetworking/UIKit (3.1.0):
     - AFNetworking/NSURLSession
+  - JCore (1.1.9)
+  - JPush (3.0.9):
+    - JCore (~> 1.1.7)
   - MBProgressHUD (1.0.0)
   - MJExtension (3.0.13)
   - MJRefresh (3.1.12)
@@ -25,6 +28,7 @@ PODS:
 
 DEPENDENCIES:
   - AFNetworking (~> 3.1.0)
+  - JPush
   - MBProgressHUD (~> 1.0.0)
   - MJExtension (~> 3.0.13)
   - MJRefresh (~> 3.1.12)
@@ -32,8 +36,22 @@ DEPENDENCIES:
   - SDWebImage (~> 4.0.0-beta2)
   - SVProgressHUD (~> 2.0.3)
 
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - AFNetworking
+    - JCore
+    - JPush
+    - MBProgressHUD
+    - MJExtension
+    - MJRefresh
+    - PulsingHalo
+    - SDWebImage
+    - SVProgressHUD
+
 SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
+  JCore: 27598485098d0db99d2812cba048003457d08cfb
+  JPush: 003d9eaef8ba2df76de32573d0c8aa62b92b3c82
   MBProgressHUD: 4890f671c94e8a0f3cf959aa731e9de2f036d71a
   MJExtension: 5932755f451458eefa24239358817f8d291240c7
   MJRefresh: b96cdb21c4aa75a7b07654311ab2f315c497e806
@@ -41,6 +59,6 @@ SPEC CHECKSUMS:
   SDWebImage: e379f33106cf8d6766f970c0ef1c3fb609c94d78
   SVProgressHUD: b0830714205bea1317ea1a2ebc71e5633af334d4
 
-PODFILE CHECKSUM: b401c47ea4f460149be41a2cc1616d147a7d3b12
+PODFILE CHECKSUM: cff665243cf8333b6fe63d5c0fdc01e62a8dd30d
 
-COCOAPODS: 1.0.1
+COCOAPODS: 1.5.0
