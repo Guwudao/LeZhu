@@ -1,95 +1,0 @@
-10
-
-dir
-1209
-https://jiawei@211.149.215.36/svn/LifeService/trunk/Life_c_ios/LeZhu(%E9%97%A8%E7%A6%81+%E5%AE%B6%E6%94%BF)%20/Pods
-https://jiawei@211.149.215.36/svn/LifeService
-
-
-
-2017-04-16T14:55:52.323242Z
-1201
-jiawei
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-3f53ce61-5f2d-c24c-8aa0-fc57abd68743
-
-Pods.xcodeproj
-dir
-
-MJExtension
-dir
-
-MBProgressHUD
-dir
-
-MJRefresh
-dir
-
-PulsingHalo
-dir
-
-Target Support Files
-dir
-
-SDWebImage
-dir
-
-Headers
-dir
-
-Local Podspecs
-dir
-
-Manifest.lock
-file
-
-
-
-
-2017-03-31T08:18:00.000000Z
-5eb14c5c0504624c7d8890c195eaca04
-2017-03-29T08:27:42.504484Z
-1078
-jiawei
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1468
-
-AFNetworking
-dir
-
-SVProgressHUD
-dir
-
