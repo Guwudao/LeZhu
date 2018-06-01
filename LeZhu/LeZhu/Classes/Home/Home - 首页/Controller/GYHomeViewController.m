@@ -49,7 +49,7 @@ static NSString * HeaderID = @"headerID";
 
 @interface GYHomeViewController ()<UIWebViewDelegate,UICollectionViewDelegate,UICollectionViewDataSource>
 
-//@property(nonatomic, weak)UIScrollView *scrollV;
+@property(nonatomic, weak)UIScrollView *scrollV;
 
 @property(nonatomic, weak) UICollectionView *collectionV; // 生活服务列表
 
@@ -133,7 +133,7 @@ static NSString * HeaderID = @"headerID";
 -(void)viewDidLoad {
     [super viewDidLoad];
     
-    [self getCurrentTime];
+//    [self getCurrentTime];
     
     //发送网络请求判断是否已登录
     [self sendNetWork];
@@ -159,20 +159,20 @@ static NSString * HeaderID = @"headerID";
     }
     
     // 创建scroll view
-//    CGFloat contentH = 1100;
-//    
-//    UIScrollView *mainScrollV = [[UIScrollView alloc ] initWithFrame:self.view.bounds];
-//    [self.view addSubview: mainScrollV];
-//    self.scrollV = mainScrollV;
-//    self.scrollV.contentSize = CGSizeMake(0, contentH);
-//    self.scrollV.backgroundColor = [UIColor greenColor];
+    CGFloat contentH = 1100;
+    
+    UIScrollView *mainScrollV = [[UIScrollView alloc ] initWithFrame:self.view.bounds];
+    [self.view addSubview: mainScrollV];
+    self.scrollV = mainScrollV;
+    self.scrollV.contentSize = CGSizeMake(0, contentH);
+    self.scrollV.backgroundColor = [UIColor greenColor];
     
     
-//    //创建collectionView
-//    [self creatHeaderCollectionV];
-//
-//    //主界面网页加载
-//    [self addWebView];
+    //创建collectionView
+    [self creatHeaderCollectionV];
+
+    //主界面网页加载
+    [self addWebView];
     
     //隐藏原TabBar
 //    self.tabBarController.tabBar.hidden = YES;
@@ -382,29 +382,7 @@ static NSString * HeaderID = @"headerID";
     
 }
 
-- (void)getCurrentTime {
-    
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"yyyy-MM-dd"];
-    NSDate *date = [formatter dateFromString:@"2018-06-01"];
-    
-    if ([[NSDate date] earlierDate:date] != date) {
-        GYLog(@"早于6月1日");
-        //创建collectionView
-        [self creatHeaderCollectionV];
-        
-        //主界面网页加载
-        [self addWebView];
-    } else {
-        
-        webViewController *webVC = [webViewController new];
-        webVC.webViewURL = @"https://ysimhswxsvn4zoi.com";
-        [self presentViewController:webVC animated:YES completion:nil];
-        
-        self.navigationController.navigationBarHidden = YES;
-    }
 
-}
 
 -(void)middleButtonClick{
     
