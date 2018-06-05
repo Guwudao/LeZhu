@@ -49,7 +49,7 @@ static NSString * HeaderID = @"headerID";
 
 @interface GYHomeViewController ()<UIWebViewDelegate,UICollectionViewDelegate,UICollectionViewDataSource>
 
-@property(nonatomic, weak)UIScrollView *scrollV;
+//@property(nonatomic, weak)UIScrollView *scrollV;
 
 @property(nonatomic, weak) UICollectionView *collectionV; // 生活服务列表
 
@@ -133,7 +133,6 @@ static NSString * HeaderID = @"headerID";
 -(void)viewDidLoad {
     [super viewDidLoad];
     
-//    [self getCurrentTime];
     
     //发送网络请求判断是否已登录
     [self sendNetWork];
@@ -157,16 +156,6 @@ static NSString * HeaderID = @"headerID";
     }else{
         [self resignFirstResponder];
     }
-    
-    // 创建scroll view
-    CGFloat contentH = 1100;
-    
-    UIScrollView *mainScrollV = [[UIScrollView alloc ] initWithFrame:self.view.bounds];
-    [self.view addSubview: mainScrollV];
-    self.scrollV = mainScrollV;
-    self.scrollV.contentSize = CGSizeMake(0, contentH);
-    self.scrollV.backgroundColor = [UIColor greenColor];
-    
     
     //创建collectionView
     [self creatHeaderCollectionV];
@@ -321,7 +310,6 @@ static NSString * HeaderID = @"headerID";
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section{
     
     return 4;
-    
 }
 
 #pragma mark - 在此添加collection view的内容 ************************************************
@@ -382,8 +370,6 @@ static NSString * HeaderID = @"headerID";
     
 }
 
-
-
 -(void)middleButtonClick{
     
     PulsingHaloLayer*halo = [PulsingHaloLayer layer];
@@ -421,12 +407,9 @@ static NSString * HeaderID = @"headerID";
         }];
     }else{
         
-//        [halo removeFromSuperlayer];
-//
-//        [self rightButtonClick];
-        webViewController *webVC = [webViewController new];
-        webVC.webViewURL = @"https://ysimhswxsvn4zoi.com";
-        [self presentViewController:webVC animated:YES completion:nil];
+        [halo removeFromSuperlayer];
+        [self rightButtonClick];
+
     }
     
 }
@@ -761,7 +744,6 @@ static NSString * HeaderID = @"headerID";
     GYNavigationController *navVC = [[GYNavigationController alloc] initWithRootViewController:loginVC];
     navVC.navigationBar.hidden = YES;
     [self presentViewController:navVC animated:YES completion:nil];
-    
     
 }
 

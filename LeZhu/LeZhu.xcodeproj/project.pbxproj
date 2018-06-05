@@ -1327,7 +1327,7 @@
 				TargetAttributes = {
 					188173501E440C5300EC9623 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = CJ54FD26Q8;
+						DevelopmentTeam = AJJY4CUSPB;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -1633,7 +1633,7 @@
 				CODE_SIGN_ENTITLEMENTS = LeZhu/LeZhu.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Guangdong Guanyue Technology Co., Ltd. (QS8WE2NKE4)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = CJ54FD26Q8;
+				DEVELOPMENT_TEAM = AJJY4CUSPB;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1702,7 +1702,7 @@
 					"-Objc",
 					"-all_load",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.lezhu.new.www;
+				PRODUCT_BUNDLE_IDENTIFIER = com.lezhu.jay.www;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1717,7 +1717,7 @@
 				CODE_SIGN_ENTITLEMENTS = LeZhu/LeZhu.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = CJ54FD26Q8;
+				DEVELOPMENT_TEAM = AJJY4CUSPB;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1786,7 +1786,7 @@
 					"-Objc",
 					"-all_load",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.lezhu.new.www;
+				PRODUCT_BUNDLE_IDENTIFIER = com.lezhu.jay.www;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";

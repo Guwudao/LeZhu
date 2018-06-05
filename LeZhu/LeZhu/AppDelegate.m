@@ -186,25 +186,25 @@ static NSString *channel = @"App Store";
     NSString *curVersion = dict[@"CFBundleShortVersionString"];
     NSString *lastVersion = [[NSUserDefaults standardUserDefaults] objectForKey:@"versionKey"];
     
-    if ([curVersion isEqualToString:lastVersion]) {
-        //创建tabBar控制器
-        GYTabBarViewController *tabVC = [[GYTabBarViewController alloc] init];
-        self.window.rootViewController = tabVC;
-
-    } else {
-        if (curVersion) {
-            [[NSUserDefaults standardUserDefaults] setObject:curVersion forKey:@"versionKey"];
-            [[NSUserDefaults standardUserDefaults] synchronize];
-        }
-        self.window.rootViewController = [[GYNewFeatureViewController alloc] init];
-        NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
-        [def setObject:@"1" forKey:@"shakeOpenSwitch"];
-
-    }
+//    if ([curVersion isEqualToString:lastVersion]) {
+//        //创建tabBar控制器
+//        GYTabBarViewController *tabVC = [[GYTabBarViewController alloc] init];
+//        self.window.rootViewController = tabVC;
+//
+//    } else {
+//        if (curVersion) {
+//            [[NSUserDefaults standardUserDefaults] setObject:curVersion forKey:@"versionKey"];
+//            [[NSUserDefaults standardUserDefaults] synchronize];
+//        }
+//        self.window.rootViewController = [[GYNewFeatureViewController alloc] init];
+//        NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+//        [def setObject:@"1" forKey:@"shakeOpenSwitch"];
+//
+//    }
     
-//    //创建tabBar控制器
-//    GYTabBarViewController *tabVC = [[GYTabBarViewController alloc] init];
-//    self.window.rootViewController = tabVC;
+    //创建tabBar控制器
+    GYTabBarViewController *tabVC = [[GYTabBarViewController alloc] init];
+    self.window.rootViewController = tabVC;
 }
 
 #pragma mark- JPUSHRegisterDelegate
@@ -218,7 +218,8 @@ static NSString *channel = @"App Store";
 
 - (void)jpushNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)())completionHandler {
     GYLog(@"收到推送");
-    
+    GYLog(@"-------------center: %@, response: %@", center, response);
+
     // Required
 //    NSDictionary * userInfo = response.notification.request.content.userInfo;
 //    if([response.notification.request.trigger isKindOfClass:[UNPushNotificationTrigger class]]) {
@@ -230,9 +231,13 @@ static NSString *channel = @"App Store";
 - (void)jpushNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(NSInteger))completionHandler {
     GYLog(@"跳转至推送");
     
+    GYLog(@"-------------center: %@, notification: %@", center, notification);
+    
+    
     // Required
 //    NSDictionary * userInfo = notification.request.content.userInfo;
-//    if([notification.request.trigger isKindOfClass:[UNPushNotificationTrigger class]]) {
+//    NSDictionary * userInfo = notification[@"request"][@"content"][@"userInfo"];
+//if([notification.request.trigger isKindOfClass:[UNPushNotificationTrigger class]]) {
 //        [JPUSHService handleRemoteNotification:userInfo];
 //    }
 //    completionHandler(UNNotificationPresentationOptionAlert); // 需要执行这个方法，选择是否提醒用户，有Badge、Sound、Alert三种类型可以选择设置

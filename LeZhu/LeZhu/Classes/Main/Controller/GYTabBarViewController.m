@@ -74,9 +74,6 @@
     
 
     [item setTitlePositionAdjustment:UIOffsetMake(0, -3.8)];
-//    [item setImageInsets:UIEdgeInsetsMake(0, 0, -10, 0)];
-//    item.imageInsets = UIEdgeInsetsMake(5, 0, -5, 0);
-    
     self.selectedIndex = 1;
     self.myTabBar.middleBtn.selected = YES;
 }
@@ -169,21 +166,6 @@
         
         [halo removeFromSuperlayer];
         
-//        LXAlertView *alertV = [[LXAlertView alloc] initWithTitle:@"登录确认" message:@"你尚未登录\n如没有账号, 请先注册" cancelBtnTitle:@"登录" otherBtnTitle:@"注册" clickIndexBlock:^(NSInteger clickIndex) {
-//            NSLog(@"%ld", clickIndex);
-//            if (clickIndex == 0) {
-//                //进入登录界面
-//                [self presentLoginVC];
-//                
-//            }else{
-//                
-//                //进入注册页面
-//                [self presentRegisterVC];
-//            }
-//        }];
-//        alertV.animationStyle = LXASAnimationTopShake;
-//        [alertV showLXAlertView];
-        
         GYHomeViewController *homeVC = [[GYHomeViewController alloc] init];
         [homeVC rightButtonClick];
     }
@@ -217,13 +199,6 @@
 // 创建所有子控制器
 - (void)creatAllChildVC{
   
-    
-//    // 中间占位
-//    UIViewController *vc2 = [[UIViewController alloc] init];
-//    
-//    [self addChildViewController:vc2];
-//    vc2.tabBarItem.enabled = NO;
-
     GYShowOrderViewController *orderVC = [[GYShowOrderViewController alloc] init];
     [self addChildVcWithVc:orderVC andTitle:@"订单" andImage:@"order" andSelImage:@"order"];
     
