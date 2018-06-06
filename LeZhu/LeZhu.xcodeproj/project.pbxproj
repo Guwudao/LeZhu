@@ -1630,6 +1630,7 @@
 			baseConfigurationReference = B2DA047F835176A6714309D4 /* Pods-LeZhu.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = LeZhu/LeZhu.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Guangdong Guanyue Technology Co., Ltd. (QS8WE2NKE4)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -1714,6 +1715,7 @@
 			baseConfigurationReference = 237C9A747BB955350C088DA8 /* Pods-LeZhu.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = LeZhu/LeZhu.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
